@@ -9,6 +9,12 @@ server:
 	java -Djava.security.policy=policy.txt -Djava.rmi.server.codebase=file: Servidor
 
 client:
-	javac CompromissoGUI.java AgendaGUI.java
-	java -Djava.security.policy=policy.txt AgendaGUI
+	javac SudokuGUI.java Cliente.java
+	java -Djava.security.policy=policy.txt Cliente
 
+git:
+	git checkout master
+	git pull origin master
+	git merge xandao
+	git push origin master
+	git checkout xandao
