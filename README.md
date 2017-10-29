@@ -1,7 +1,7 @@
 # Sistemas distrbuídos
 
 
-[![Build Status](https://travis-ci.org/xaaaandao/SudokuRMI.svg?branch=master)](https://travis-ci.org/xaaaaaandao/SudokuRMI)
+[![Build Status](https://travis-ci.org/xaaaandao/SudokuRMI.svg?branch=master)](https://travis-ci.org/xaaaandao/SudokuRMI)
 
 Sistemas distrbuídos - UTFPR - CM - (2017-2)
 
