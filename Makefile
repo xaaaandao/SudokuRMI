@@ -4,6 +4,10 @@ registry:
 clean:
 	rm *.class
 
+compile:
+	javac Sudoku.java SudokuInterface.java Servidor.java
+	javac SudokuGUI.java Cliente.java
+
 server:
 	javac Sudoku.java SudokuInterface.java Servidor.java
 	java -Djava.security.policy=policy.txt -Djava.rmi.server.codebase=file: Servidor
