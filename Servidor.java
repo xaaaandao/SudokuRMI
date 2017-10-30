@@ -16,6 +16,7 @@ public class Servidor {
 
 	         /* Aguardando invocações remotas */
 	         System.out.println("Servidor pronto ...");
+	         
 	     } catch (Exception e) {
 	         System.out.println(e);
          }

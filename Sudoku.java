@@ -91,4 +91,10 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
     public int [][]matrixForUser() throws RemoteException {
     	return matrixUsers;
     }
+    
+    public boolean checkInput(int value, int i, int j) throws RemoteException{
+    	System.out.println("i"+i);
+    	System.out.println("j"+j);
+    	return true;
+	}
 }
