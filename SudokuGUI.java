@@ -12,6 +12,17 @@ public class SudokuGUI {
 	int row = 9;
 	int column = 9;
 	
+	public void checkResponseSudoku(int response) {
+		switch (response) {
+		case 1:
+			break;
+		case 2:
+			break;
+		default:
+			break;
+		}
+	}
+	
 	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrix) {
 		JFrame window = new JFrame("Play Sudoku");
 		JLabel[][] fixContent = new JLabel[row][column];
@@ -39,7 +50,7 @@ public class SudokuGUI {
 				             } catch (NumberFormatException e) {
 				                return false;
 				             }
-				             if (intValue < 0 || intValue > 99)
+				             if (intValue < 1 || intValue > 99)
 				                return false;
 				             return true; 
 				          }
@@ -81,11 +92,17 @@ public class SudokuGUI {
 							//try {
 								//sudoku.checkInput(9, 9);
 								if(input.getText().length() > 0) {
-									System.out.println("xii nao tem nada");
+									try {
+										int responseServer = sudoku.checkInput(Integer.parseInt(input.getText()), field.getI(), field.getJ());
+										checkResponseSudoku(responseServer);
+									} catch (RemoteException re){
+										
+									}
+								//	System.out.println("xii nao tem nada");
 								}
-								System.out.println("->"+input.getText());
+								/*System.out.println("->"+input.getText());
 								System.out.println("i"+field.getI());
-								System.out.println("j"+field.getJ());
+								System.out.println("j"+field.getJ());*/
 							//} catch (RemoteException re) {
 								
 							//}

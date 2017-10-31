@@ -5,18 +5,31 @@ import java.util.*;
 public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 
 	static int [][]matrixAnswers;
-	static int [][]matrixUsers;
+	static int [][]matrixSended;
+	static int [][]matrixPlayer;
 	int row = 9;
 	int columns = 9;
 	
 	public Sudoku() throws RemoteException {
         super();
         matrixAnswers = new int[row][columns];
-        matrixUsers = new int[row][columns];
+        matrixPlayer = new int[row][columns];
         matrixAnswers = fillMatrix();
-        matrixUsers = hidePositionsMatrix(matrixAnswers);
+        matrixPlayer = hidePositionsMatrix(matrixAnswers);
+        matrixSended = matrixAnswers;
         System.out.println("Objeto remoto instanciado");
     }
+	
+	public int countFieldsEmpty() {
+		int count = 0;
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < columns; j++) {
+				if(matrixPlayer[i][j] == 0)
+					count++;
+			}
+		}
+		return count;
+	}
 	
 	public void printMatrix(int [][]matrix) {
 		for(int i = 0; i < row; i++) {
@@ -88,13 +101,64 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 		return matrix;
 	}
 	
-    public int [][]matrixForUser() throws RemoteException {
-    	return matrixUsers;
+	public int countHit() throws RemoteException {
+		int hit = 0;
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < columns; j++) {
+				if(matrixSended[i][j] == 0) {
+					if(matrixPlayer[i][j] == matrixAnswers[i][j]) {
+						hit++;
+					}
+				}
+			}
+		}
+    	return hit;
+    }
+
+	public int countError() throws RemoteException {
+		int error = 0;
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < columns; j++) {
+				if(matrixSended[i][j] == 0) {
+					if(matrixPlayer[i][j] != matrixAnswers[i][j]) {
+						error++;
+					}
+				}
+			}
+		}
+    	return error;
+    }
+	
+	public int [][]matrixForUser() throws RemoteException {
+    	return matrixPlayer;
     }
     
-    public void checkInput(int i, int j) throws RemoteException{
+    /**
+     * return 1 -> Todos os campos estão preenchidos (Pergunto para o cliente se ele deseja conferir a resposta)
+     * return 2 -> Valor adicionado com sucesso
+     * */
+    public int checkInput(int value, int i, int j) throws RemoteException{
+    	/* Verifico se a posição que o usuário está tentando inserir está vazia */
+    	if(matrixPlayer[i][j] == 0) {
+    		/* Se estiver vazia insiro na matriz */
+    		matrixPlayer[i][j] = value;
+			/* Verifico se todos os campos estão preenchidos */
+    		if(countFieldsEmpty() == 0) {
+    			return 1;
+    		}
+    		return 2;
+    	/* Caso a posição já está preenchida */
+    	} else {
+    		/* Verifico se todos os campos estão preenchidos */
+    		/*if(countFieldsEmpty() == 0) {
+    		
+    		}*/
+    	}
+    	/*printMatrix(matrixPlayer);
     	System.out.println("I: "+i);
     	System.out.println("J: "+j);
+    	System.out.println("value: "+value);*/
+    	return 0;
     }
 
 }
