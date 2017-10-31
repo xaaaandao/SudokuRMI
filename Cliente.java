@@ -12,11 +12,15 @@ public class Cliente {
             Registry registry = LocateRegistry.getRegistry("localhost");
             SudokuInterface sudoku = (SudokuInterface)registry.lookup("JogoSudoku");
 
-            SudokuGUI s = new SudokuGUI();
-            s.buildWindowSudoku(sudoku.matrixForUser());
-            System.out.println("tessste");
+            SudokuGUI sudokuGUI = new SudokuGUI();
+            sudokuGUI.buildWindowSudoku(sudoku, sudoku.matrixForUser());
+
+    	} catch (RemoteException re) {
+        
+        } catch (NotBoundException n) {
+        
         } catch (Exception e) {
-           System.out.println(e);
+    	
         }
     }
 }
