@@ -11,33 +11,16 @@ public class SudokuGUI {
 	
 	int row = 9;
 	int column = 9;
-	int i;
-	int j;
 	
-<<<<<<< HEAD
-	
-	public void printMatrix(int [][]matrix) {
-		for(int i = 0; i < row; i++) {
-			for(int j = 0; j < column; j++) {
-				System.out.print(matrix[i][j] + " ");
-			}
-			System.out.print("\n");
-		}
-	}
-	
-	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrix) throws Exception, RemoteException{
-		
-=======
 	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrix) {
->>>>>>> xandao
 		JFrame window = new JFrame("Play Sudoku");
 		JLabel[][] fixContent = new JLabel[row][column];
 		JTextField[][] fillContent = new JTextField[row][column];
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(row, column));
 		
-		for(i = 0; i < row; i++) {
-			for(j = 0; j < column; j++) {
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < column; j++) {
 				if(matrix[i][j] == 0) {
 					fillContent[i][j] = new JTextField(1);
 				    fillContent[i][j].setHorizontalAlignment(JTextField.CENTER);
@@ -91,16 +74,6 @@ public class SudokuGUI {
 				          }
 				       });
 
-<<<<<<< HEAD
-				    fillContent[i][j].addFocusListener(new java.awt.event.FocusAdapter() {
-						public void focusLost(java.awt.event.FocusEvent e) {
-							JTextField input = (JTextField) e.getSource();
-							try {
-								sudoku.checkInput(Integer.parseInt(input.getText()), i % row, j % column);
-							} catch (RemoteException re){
-								//System.out.println(re);
-							}	
-=======
 				    Fields field = new Fields(i, j, fillContent[i][j]);
 				    fillContent[i][j].addFocusListener(new java.awt.event.FocusAdapter() {
 						public void focusLost(java.awt.event.FocusEvent e) {
@@ -116,7 +89,6 @@ public class SudokuGUI {
 							//} catch (RemoteException re) {
 								
 							//}
->>>>>>> xandao
 						}
 					});
 					panel.add(fillContent[i][j]);
