@@ -14,6 +14,7 @@ public class SudokuGUI {
 	int i;
 	int j;
 	
+<<<<<<< HEAD
 	
 	public void printMatrix(int [][]matrix) {
 		for(int i = 0; i < row; i++) {
@@ -26,6 +27,9 @@ public class SudokuGUI {
 	
 	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrix) throws Exception, RemoteException{
 		
+=======
+	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrix) {
+>>>>>>> xandao
 		JFrame window = new JFrame("Play Sudoku");
 		JLabel[][] fixContent = new JLabel[row][column];
 		JTextField[][] fillContent = new JTextField[row][column];
@@ -35,11 +39,9 @@ public class SudokuGUI {
 		for(i = 0; i < row; i++) {
 			for(j = 0; j < column; j++) {
 				if(matrix[i][j] == 0) {
-					fillContent[i][j] = new JTextField();
-					fillContent[i][j].setHorizontalAlignment(JTextField.CENTER);
-					
-				    fillContent[i][j] = new JTextField(1);
-				    PlainDocument document = (PlainDocument) fillContent[i][j].getDocument();
+					fillContent[i][j] = new JTextField(1);
+				    fillContent[i][j].setHorizontalAlignment(JTextField.CENTER);
+					PlainDocument document = (PlainDocument) fillContent[i][j].getDocument();
 				    document.setDocumentFilter(new DocumentFilter() {
 				         private boolean isValid(String testText) {
 				             if (testText.length() > 1)
@@ -89,6 +91,7 @@ public class SudokuGUI {
 				          }
 				       });
 
+<<<<<<< HEAD
 				    fillContent[i][j].addFocusListener(new java.awt.event.FocusAdapter() {
 						public void focusLost(java.awt.event.FocusEvent e) {
 							JTextField input = (JTextField) e.getSource();
@@ -97,6 +100,23 @@ public class SudokuGUI {
 							} catch (RemoteException re){
 								//System.out.println(re);
 							}	
+=======
+				    Fields field = new Fields(i, j, fillContent[i][j]);
+				    fillContent[i][j].addFocusListener(new java.awt.event.FocusAdapter() {
+						public void focusLost(java.awt.event.FocusEvent e) {
+							JTextField input = (JTextField) e.getSource();
+							//try {
+								//sudoku.checkInput(9, 9);
+								if(input.getText().length() > 0) {
+									System.out.println("xii nao tem nada");
+								}
+								System.out.println("->"+input.getText());
+								System.out.println("i"+field.getI());
+								System.out.println("j"+field.getJ());
+							//} catch (RemoteException re) {
+								
+							//}
+>>>>>>> xandao
 						}
 					});
 					panel.add(fillContent[i][j]);
