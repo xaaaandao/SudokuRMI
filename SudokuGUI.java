@@ -5,6 +5,8 @@ import java.awt.event.*;
 import javax.swing.text.*;
 import javax.swing.text.DocumentFilter.*;
 
+import javafx.stage.WindowEvent;
+
 import javax.swing.*;
 
 public class SudokuGUI {
@@ -12,14 +14,44 @@ public class SudokuGUI {
 	int row = 9;
 	int column = 9;
 	
-	public void checkResponseSudoku(int response) {
+	/**
+     * return 1 -> Todos os campos estão preenchidos (Pergunto para o cliente se ele deseja conferir a resposta)
+     * return 2 -> Valor adicionado com sucesso
+     * return 3 -> Verifico se o usuário que sobrescrever o valor daquela posição
+     **/
+	public void checkResponseSudoku(JFrame window, SudokuInterface sudoku, int response) {
 		switch (response) {
-		case 1:
-			break;
-		case 2:
-			break;
-		default:
-			break;
+			case 1:
+				/* Preciso ter uma interface verificando sim ou não */
+				/* Se sim, peço para o servidor me contar a quantidade de erros e acertos, e imprimo na interface */
+				if (JOptionPane.showConfirmDialog(null, "Would you like to count the number of hits and errors?", "Finish sudoku", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					try {
+						String stringHit = Integer.toString(sudoku.countHit());
+						String stringError = Integer.toString(sudoku.countError());
+						if (JOptionPane.showConfirmDialog(null, "Hits: " + stringHit +"\nErrors: " +  stringError + "\nWould you like to play again?", "Hits ands errors", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+							//Invocar o método que pede novo sudoku
+						} else {
+							//Senão pede fecha o sudoku
+							System.exit(1);
+						}
+					} catch (RemoteException re){
+						
+					}
+				}
+				break;
+			case 2:
+				/* Valor adicionado com sucesso */
+				/* JOptionPane.showMessageDialog (null, "Added value successfully!!!", "Sucessful!", JOptionPane.INFORMATION_MESSAGE);*/
+				break;
+			case 3:
+				/* Preciso ter uma interface verificando sim ou não */
+				/* Se sim, substituto o valor que está na minha posição pelo valor que eu quero */
+				/*if (JOptionPane.showConfirmDialog(null, "This position is fulfilled! Would you like to override the value of this field?", "Filled position", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+				    // yes option
+				}*/
+				break;
+			default:
+				break;
 		}
 	}
 	
@@ -89,23 +121,14 @@ public class SudokuGUI {
 				    fillContent[i][j].addFocusListener(new java.awt.event.FocusAdapter() {
 						public void focusLost(java.awt.event.FocusEvent e) {
 							JTextField input = (JTextField) e.getSource();
-							//try {
-								//sudoku.checkInput(9, 9);
-								if(input.getText().length() > 0) {
-									try {
-										int responseServer = sudoku.checkInput(Integer.parseInt(input.getText()), field.getI(), field.getJ());
-										checkResponseSudoku(responseServer);
-									} catch (RemoteException re){
-										
-									}
-								//	System.out.println("xii nao tem nada");
+							if(input.getText().length() > 0) {
+								try {
+									int responseServer = sudoku.checkInput(Integer.parseInt(input.getText()), field.getI(), field.getJ());
+									checkResponseSudoku(window, sudoku, responseServer);
+								} catch (RemoteException re){
+									
 								}
-								/*System.out.println("->"+input.getText());
-								System.out.println("i"+field.getI());
-								System.out.println("j"+field.getJ());*/
-							//} catch (RemoteException re) {
-								
-							//}
+							}
 						}
 					});
 					panel.add(fillContent[i][j]);

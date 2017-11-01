@@ -14,11 +14,19 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
         super();
         matrixAnswers = new int[row][columns];
         matrixPlayer = new int[row][columns];
+        matrixSended = new int[row][columns];
         matrixAnswers = fillMatrix();
         matrixPlayer = hidePositionsMatrix(matrixAnswers);
-        matrixSended = matrixAnswers;
+        copyMatrix(matrixSended, matrixPlayer);
         System.out.println("Objeto remoto instanciado");
     }
+	
+	public void copyMatrix(int[][] dest,  int[][] src) {
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < columns; j++)
+				dest[i][j] = src[i][j];
+		}
+	}
 	
 	public int countFieldsEmpty() {
 		int count = 0;
@@ -102,6 +110,11 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 	}
 	
 	public int countHit() throws RemoteException {
+		System.out.println("count hit");
+        System.out.println("====================");
+        printMatrix(matrixPlayer);
+        System.out.println("====================");
+        printMatrix(matrixSended);
 		int hit = 0;
 		for(int i = 0; i < row; i++) {
 			for(int j = 0; j < columns; j++) {
@@ -116,6 +129,11 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
     }
 
 	public int countError() throws RemoteException {
+		System.out.println("count errors");
+        System.out.println("====================");
+        printMatrix(matrixPlayer);
+        System.out.println("====================");
+        printMatrix(matrixSended);
 		int error = 0;
 		for(int i = 0; i < row; i++) {
 			for(int j = 0; j < columns; j++) {
@@ -136,29 +154,24 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
     /**
      * return 1 -> Todos os campos estão preenchidos (Pergunto para o cliente se ele deseja conferir a resposta)
      * return 2 -> Valor adicionado com sucesso
-     * */
+     * return 3 -> Verifico se o usuário que sobrescrever o valor daquela posição
+     **/
     public int checkInput(int value, int i, int j) throws RemoteException{
     	/* Verifico se a posição que o usuário está tentando inserir está vazia */
     	if(matrixPlayer[i][j] == 0) {
-    		/* Se estiver vazia insiro na matriz */
+    		/* Insiro na matriz */
     		matrixPlayer[i][j] = value;
-			/* Verifico se todos os campos estão preenchidos */
+			/* Verifico se com essa nova adição todos os campos já estão preenchidos */
     		if(countFieldsEmpty() == 0) {
     			return 1;
     		}
     		return 2;
     	/* Caso a posição já está preenchida */
     	} else {
-    		/* Verifico se todos os campos estão preenchidos */
-    		/*if(countFieldsEmpty() == 0) {
-    		
-    		}*/
+    		/* Verifico se eu quero sobrescrever com o meu valor */
+    		/* Se sim coloco o valor que o usuário quer e devolvo para todos os meus jogadores */
+    		return 3;
     	}
-    	/*printMatrix(matrixPlayer);
-    	System.out.println("I: "+i);
-    	System.out.println("J: "+j);
-    	System.out.println("value: "+value);*/
-    	return 0;
     }
 
 }
