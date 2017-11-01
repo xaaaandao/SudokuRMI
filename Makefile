@@ -17,6 +17,7 @@ client:
 	java -Djava.security.policy=policy.txt Cliente
 
 git:
+	make clean
 	git checkout master
 	git pull origin master
 	git merge xandao
