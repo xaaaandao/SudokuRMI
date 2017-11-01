@@ -19,7 +19,7 @@ public class SudokuGUI {
      * return 2 -> Valor adicionado com sucesso
      * return 3 -> Verifico se o usuário que sobrescrever o valor daquela posição
      **/
-	public void checkResponseSudoku(JFrame window, SudokuInterface sudoku, int response) {
+	public void checkResponseSudoku(SudokuInterface sudoku, int response) {
 		switch (response) {
 			case 1:
 				/* Preciso ter uma interface verificando sim ou não */
@@ -55,7 +55,7 @@ public class SudokuGUI {
 		}
 	}
 	
-	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrix) {
+	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrixFields, int[][] matrixUser) {
 		JFrame window = new JFrame("Play Sudoku");
 		JLabel[][] fixContent = new JLabel[row][column];
 		JTextField[][] fillContent = new JTextField[row][column];
@@ -64,76 +64,20 @@ public class SudokuGUI {
 		
 		for(int i = 0; i < row; i++) {
 			for(int j = 0; j < column; j++) {
-				if(matrix[i][j] == 0) {
+				if(matrixFields[i][j] == 0) {
 					fillContent[i][j] = new JTextField(1);
 				    fillContent[i][j].setHorizontalAlignment(JTextField.CENTER);
+				    if(matrixUser[i][j] > 0) {
+				    	fillContent[i][j].setText(Integer.toString(matrixUser[i][j]));
+				    }
 					PlainDocument document = (PlainDocument) fillContent[i][j].getDocument();
-				    document.setDocumentFilter(new DocumentFilter() {
-				         private boolean isValid(String testText) {
-				             if (testText.length() > 1)
-				                return false;
-				             
-				             if (testText.isEmpty())
-				                return true;
-				             
-				             int intValue = 0;
-				             try {
-				                intValue = Integer.parseInt(testText.trim());
-				             } catch (NumberFormatException e) {
-				                return false;
-				             }
-				             if (intValue < 1 || intValue > 99)
-				                return false;
-				             return true; 
-				          }
-
-				          @Override
-				          public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
-				             StringBuilder sb = new StringBuilder();
-				             sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
-				             sb.insert(offset, text);
-				             if (isValid(sb.toString()))
-				                super.insertString(fb, offset, text, attr);
-				          }
-
-				          @Override
-				          public void replace(FilterBypass fb, int offset, int length,String text, AttributeSet attrs) throws BadLocationException {
-				             StringBuilder sb = new StringBuilder();
-				             sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
-				             int end = offset + length;
-				             sb.replace(offset, end, text);
-				             if (isValid(sb.toString()))
-				                super.replace(fb, offset, length, text, attrs);
-				          }
-
-				          @Override
-				          public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
-				             StringBuilder sb = new StringBuilder();
-				             sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
-				             int end = offset + length;
-				             sb.delete(offset, end);
-				             if (isValid(sb.toString()))
-				                super.remove(fb, offset, length);
-				          }
-				       });
-
+					checkValue(document);
+				    /* Fields pega a posição que o cliente está preenchendo */
 				    Fields field = new Fields(i, j, fillContent[i][j]);
-				    fillContent[i][j].addFocusListener(new java.awt.event.FocusAdapter() {
-						public void focusLost(java.awt.event.FocusEvent e) {
-							JTextField input = (JTextField) e.getSource();
-							if(input.getText().length() > 0) {
-								try {
-									int responseServer = sudoku.checkInput(Integer.parseInt(input.getText()), field.getI(), field.getJ());
-									checkResponseSudoku(window, sudoku, responseServer);
-								} catch (RemoteException re){
-									
-								}
-							}
-						}
-					});
+				    focusField(sudoku, fillContent[i][j], field);
 					panel.add(fillContent[i][j]);
 				} else {
-					fixContent[i][j] = new JLabel(Integer.toString(matrix[i][j]), SwingConstants.CENTER);
+					fixContent[i][j] = new JLabel(Integer.toString(matrixFields[i][j]), SwingConstants.CENTER);
 					panel.add(fixContent[i][j]);
 				}
 			}
@@ -144,6 +88,74 @@ public class SudokuGUI {
 		window.setSize(600, 600);
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
+	}
+	
+	//Checa se o valor é entre 1 e 9, e é só um dígito
+	public void checkValue(PlainDocument document) {
+	    document.setDocumentFilter(new DocumentFilter() {
+	         private boolean isValid(String testText) {
+	             if (testText.length() > 1)
+	                return false;
+	             
+	             if (testText.isEmpty())
+	                return true;
+	             
+	             int intValue = 0;
+	             try {
+	                intValue = Integer.parseInt(testText.trim());
+	             } catch (NumberFormatException e) {
+	                return false;
+	             }
+	             if (intValue < 1 || intValue > 99)
+	                return false;
+	             return true; 
+	          }
+
+	          @Override
+	          public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
+	             StringBuilder sb = new StringBuilder();
+	             sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
+	             sb.insert(offset, text);
+	             if (isValid(sb.toString()))
+	                super.insertString(fb, offset, text, attr);
+	          }
+
+	          @Override
+	          public void replace(FilterBypass fb, int offset, int length,String text, AttributeSet attrs) throws BadLocationException {
+	             StringBuilder sb = new StringBuilder();
+	             sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
+	             int end = offset + length;
+	             sb.replace(offset, end, text);
+	             if (isValid(sb.toString()))
+	                super.replace(fb, offset, length, text, attrs);
+	          }
+
+	          @Override
+	          public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+	             StringBuilder sb = new StringBuilder();
+	             sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
+	             int end = offset + length;
+	             sb.delete(offset, end);
+	             if (isValid(sb.toString()))
+	                super.remove(fb, offset, length);
+	          }
+	       });
+	}
+	
+	public void focusField(SudokuInterface sudoku, JTextField field, Fields position) {
+	    field.addFocusListener(new java.awt.event.FocusAdapter() {
+			public void focusLost(java.awt.event.FocusEvent e) {
+				JTextField input = (JTextField) e.getSource();
+				if(input.getText().length() > 0) {
+					try {
+						int responseServer = sudoku.checkInput(Integer.parseInt(input.getText()), position.getI(), position.getJ());
+						checkResponseSudoku(sudoku, responseServer);
+					} catch (RemoteException re){
+						
+					}
+				}
+			}
+		});
 	}
 }
 

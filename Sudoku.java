@@ -5,7 +5,7 @@ import java.util.*;
 public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 
 	static int [][]matrixAnswers;
-	static int [][]matrixSended;
+	static int [][]matrixFields;
 	static int [][]matrixPlayer;
 	int row = 9;
 	int columns = 9;
@@ -14,10 +14,10 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
         super();
         matrixAnswers = new int[row][columns];
         matrixPlayer = new int[row][columns];
-        matrixSended = new int[row][columns];
+        matrixFields = new int[row][columns];
         matrixAnswers = fillMatrix();
         matrixPlayer = hidePositionsMatrix(matrixAnswers);
-        copyMatrix(matrixSended, matrixPlayer);
+        copyMatrix(matrixFields, matrixPlayer);
         System.out.println("Objeto remoto instanciado");
     }
 	
@@ -110,15 +110,10 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 	}
 	
 	public int countHit() throws RemoteException {
-		System.out.println("count hit");
-        System.out.println("====================");
-        printMatrix(matrixPlayer);
-        System.out.println("====================");
-        printMatrix(matrixSended);
 		int hit = 0;
 		for(int i = 0; i < row; i++) {
 			for(int j = 0; j < columns; j++) {
-				if(matrixSended[i][j] == 0) {
+				if(matrixFields[i][j] == 0) {
 					if(matrixPlayer[i][j] == matrixAnswers[i][j]) {
 						hit++;
 					}
@@ -129,15 +124,10 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
     }
 
 	public int countError() throws RemoteException {
-		System.out.println("count errors");
-        System.out.println("====================");
-        printMatrix(matrixPlayer);
-        System.out.println("====================");
-        printMatrix(matrixSended);
 		int error = 0;
 		for(int i = 0; i < row; i++) {
 			for(int j = 0; j < columns; j++) {
-				if(matrixSended[i][j] == 0) {
+				if(matrixFields[i][j] == 0) {
 					if(matrixPlayer[i][j] != matrixAnswers[i][j]) {
 						error++;
 					}
@@ -147,16 +137,23 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
     	return error;
     }
 	
-	public int [][]matrixForUser() throws RemoteException {
+	public int [][]matrixForPlayer() throws RemoteException {
     	return matrixPlayer;
     }
     
+	public int [][]matrixFields() throws RemoteException {
+    	return matrixFields;
+    }
+	
     /**
      * return 1 -> Todos os campos estão preenchidos (Pergunto para o cliente se ele deseja conferir a resposta)
      * return 2 -> Valor adicionado com sucesso
      * return 3 -> Verifico se o usuário que sobrescrever o valor daquela posição
      **/
     public int checkInput(int value, int i, int j) throws RemoteException{
+    	//System.out.println("value"+ value);
+    	//System.out.println("i"+ i);
+    	//System.out.println("j"+ j);
     	/* Verifico se a posição que o usuário está tentando inserir está vazia */
     	if(matrixPlayer[i][j] == 0) {
     		/* Insiro na matriz */

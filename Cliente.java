@@ -13,7 +13,7 @@ public class Cliente {
             SudokuInterface sudoku = (SudokuInterface)registry.lookup("JogoSudoku");
 
             SudokuGUI sudokuGUI = new SudokuGUI();
-            sudokuGUI.buildWindowSudoku(sudoku, sudoku.matrixForUser());
+            sudokuGUI.buildWindowSudoku(sudoku, sudoku.matrixFields(), sudoku.matrixForPlayer());
 
     	} catch (RemoteException re) {
         
