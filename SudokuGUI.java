@@ -234,10 +234,16 @@ public class SudokuGUI {
 	    field.addFocusListener(new java.awt.event.FocusAdapter() {
 			public void focusLost(java.awt.event.FocusEvent e) {
 				JTextField input = (JTextField) e.getSource();
-				if(input.getText().length() > 0) {
+				if(input.getText().length() >= 0) {
 					try {
-						int responseServer = sudoku.checkInput(Integer.parseInt(input.getText()), position.getI(), position.getJ());
-						checkResponseSudoku(sudoku, responseServer, Integer.parseInt(input.getText()), position);
+						int value;
+						if(input.getText().length() == 0) {
+							value = 0;
+						} else {
+							value = Integer.parseInt(input.getText());
+						}
+						int responseServer = sudoku.checkInput(value, position.getI(), position.getJ());
+						checkResponseSudoku(sudoku, responseServer, value, position);
 					} catch (RemoteException re){
 						
 					}

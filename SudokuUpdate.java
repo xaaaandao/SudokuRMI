@@ -52,7 +52,7 @@ public class SudokuUpdate extends TimerTask {
 	 * */
     public void run() {
     	try {
-    		printMatrix(s.matrixForPlayer());
+    		//printMatrix(s.matrixForPlayer());
     		setMatrix(s.matrixForPlayer());
     	} catch (RemoteException re) {
     		
