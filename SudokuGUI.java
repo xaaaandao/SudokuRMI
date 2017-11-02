@@ -145,11 +145,18 @@ public class SudokuGUI {
 			} else {
 				/* Verifico a matrix que tá sendo recebida é diferenta tá que eu tô */
 				matrixUpdate = sudokuUpdate.getMatrix();
+				//System.out.println("aqui");
 				if(!compareMatrix(matrixUpdate, matrixUser)) {
+					//System.out.println("ok");
 					for(int i = 0; i < rows; i++) {
 						for(int j = 0; j < columns; j++) {
 							if(matrixFields[i][j] == 0) {
-								fillContent[i][j].setText(Integer.toString(matrixUpdate[i][j]));
+								//System.out.println("entrou");
+								if(matrixUpdate[i][j] > 0) {
+									fillContent[i][j].setText(Integer.toString(matrixUpdate[i][j]));	
+								} else {
+									fillContent[i][j].setText("");
+								}
 							}
 						}
 					}
