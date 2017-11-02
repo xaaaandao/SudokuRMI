@@ -235,7 +235,10 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
     	} else {
     		/* Verifico se eu quero sobrescrever com o meu valor */
     		/* Se sim coloco o valor que o usuário quer e devolvo para todos os meus jogadores */
-    		return 3;
+    		if(matrixPlayer[i][j] == value){
+        		return 3;	
+    		}
+    		return 4;
     	}
     }
     

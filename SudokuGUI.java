@@ -45,15 +45,17 @@ public class SudokuGUI {
 				/* Valor adicionado com sucesso */
 				break;
 			case 3:
-				/* Preciso ter uma interface verificando sim ou não */
-				/* Se sim, substituto o valor que está na minha posição pelo valor que eu quero */
-				/*if (JOptionPane.showConfirmDialog(null, "Essa posição já está preenchida! Deseja sobrescrever essa posição?", "Posição preenchida", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+				/* Caso que o jogador esteja sobescrevendo seja igual ao valor que já esteja lá */
+				break;
+			case 4:
+				/* Caso que o jogador esteja sobescrevendo seja diferente ao valor que já esteja lá */
+				if (JOptionPane.showConfirmDialog(null, "Você deseja sobrescrever o valor?", "Posição já preenchida", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					try {
-						sudoku.replaceValue(value, field.getI(), field.getJ());	
-					} catch (RemoteException re) {
-
+						sudoku.replaceValue(value, field.getI(), field.getJ());
+					} catch (RemoteException r) {
+						
 					}
-				}*/
+				}
 				break;
 			default:
 				break;
@@ -155,13 +157,13 @@ public class SudokuGUI {
 				}
 			}
 			/* Verifico se todas as posições estão preenchidas */
-			try {
+			/*try {
 				if(sudoku.countFillFields() == 0) {
 					checkResponseSudoku(sudoku, 1, 0, null);
 				}
 			} catch (RemoteException re) {
 				
-			}
+			}*/
 		}
 	}
 	
