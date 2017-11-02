@@ -6,8 +6,6 @@ import javax.swing.text.*;
 import javax.swing.text.DocumentFilter.*;
 import javafx.stage.*;
 import javax.swing.*;
-import javax.swing.JTable.PrintMode;
-
 import java.util.Timer;
 
 public class SudokuGUI {
@@ -17,11 +15,13 @@ public class SudokuGUI {
 	SudokuInterface s;
 	
 	/**
-     * return 1 -> Todos os campos estão preenchidos (Pergunto para o cliente se ele deseja conferir a resposta)
-     * return 2 -> Valor adicionado com sucesso
-     * return 3 -> Verifico se o usuário que sobrescrever o valor daquela posição
-     **/
-	public void checkResponseSudoku(SudokuInterface sudoku, int response) {
+	 * O método checkResponseSudoku(SudokuInterface sudoku, int response, int value, Fields field), interpreta
+	 * a resposta que foi dada ao servidor, se for um significa que todos os campos já foram preenchidos, se for
+	 * dois que o valor foi adicionado correamente, e por fim três que verifica se o usuário deseja ou não
+	 * sobrescrever ou não o valor.
+	 * @return void.
+	 * */
+	public void checkResponseSudoku(SudokuInterface sudoku, int response, int value, Fields field) {
 		switch (response) {
 			case 1:
 				/* Preciso ter uma interface verificando sim ou não */
@@ -43,13 +43,16 @@ public class SudokuGUI {
 				break;
 			case 2:
 				/* Valor adicionado com sucesso */
-				/* JOptionPane.showMessageDialog (null, "Added value successfully!!!", "Sucessful!", JOptionPane.INFORMATION_MESSAGE);*/
 				break;
 			case 3:
 				/* Preciso ter uma interface verificando sim ou não */
 				/* Se sim, substituto o valor que está na minha posição pelo valor que eu quero */
-				/*if (JOptionPane.showConfirmDialog(null, "This position is fulfilled! Would you like to override the value of this field?", "Filled position", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-				    // yes option
+				/*if (JOptionPane.showConfirmDialog(null, "Essa posição já está preenchida! Deseja sobrescrever essa posição?", "Posição preenchida", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					try {
+						sudoku.replaceValue(value, field.getI(), field.getJ());	
+					} catch (RemoteException re) {
+
+					}
 				}*/
 				break;
 			default:
@@ -57,6 +60,10 @@ public class SudokuGUI {
 		}
 	}
 	
+	/**
+	 * O método printMatrix(int [][]matrix), imprime a variável matrix.
+	 * @return void.
+	 * */
 	public void printMatrix(int [][]matrix) {
 		System.out.println("Na GUI");
 		for(int i = 0; i < rows; i++) {
@@ -67,7 +74,11 @@ public class SudokuGUI {
 		}
 	}
 	
-	
+	/**
+	 * O método copyMatrix(int[][] dest, int[][] src), recebe duas matrizes uma de origem e outra de destino,
+	 * e é copiado os valores presentes na matriz de origem para um matriz de destino.
+	 * @return void.
+	 * */
 	public void copyMatrix(int[][] dest,  int[][] src) {
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++)
@@ -75,6 +86,14 @@ public class SudokuGUI {
 		}
 	}
 	
+	/**
+	 * O método buildWindowSudoku(SudokuInterface sudoku, int [][]matrixFields, int[][] matrixUser), primeiramente
+	 * verifica se a interface gráfica já foi criada ou não, se já tiver sido criada percorre na matrixFields
+	 * verifica se na posição que está sendo percorrida é zero se for zero vai ser um JTextField, caso contrário
+	 * JLabel. Caso a interface gráfica já esteja montada, verifica se matriz que está sendo exibida e a matriz
+	 * que está sendo preenchida pelos usuários no servidor é diferente, se for diferente atualiza com os novos valores.
+	 * @return void.
+	 * */
 	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrixFields, int[][] matrixUser) {
 		boolean buildGUI = false;
 		JFrame window = new JFrame("Jogue Sudoku");
@@ -138,7 +157,7 @@ public class SudokuGUI {
 			/* Verifico se todas as posições estão preenchidas */
 			try {
 				if(sudoku.countFillFields() == 0) {
-					checkResponseSudoku(sudoku, 1);
+					checkResponseSudoku(sudoku, 1, 0, null);
 				}
 			} catch (RemoteException re) {
 				
@@ -146,7 +165,12 @@ public class SudokuGUI {
 		}
 	}
 	
-	//Checa se o valor é entre 1 e 9, e é só um dígito
+	/**
+	 * O método checkValue(PlainDocument document), verifica simplesmente se o valor que foi colocado no JTextField
+	 * é um somente um caractere, e se é um valor de 1 a 9, que são os únicos valores que são permitidos por um
+	 * sudoku.
+	 * @return void.
+	 * */
 	public void checkValue(PlainDocument document) {
 	    document.setDocumentFilter(new DocumentFilter() {
 	         private boolean isValid(String testText) {
@@ -198,6 +222,12 @@ public class SudokuGUI {
 	       });
 	}
 	
+	/**
+	 * O método focusField(SudokuInterface sudoku, JTextField field, Fields position), verifica
+	 * se o cursor ainda está naquele campo, quando não está no campo ele pega o valor e a posição e manda 
+	 * para o servidor processar e pega a resposta do servidor e interpreta ela.
+	 * @return void.
+	 * */
 	public void focusField(SudokuInterface sudoku, JTextField field, Fields position) {
 	    field.addFocusListener(new java.awt.event.FocusAdapter() {
 			public void focusLost(java.awt.event.FocusEvent e) {
@@ -205,7 +235,7 @@ public class SudokuGUI {
 				if(input.getText().length() > 0) {
 					try {
 						int responseServer = sudoku.checkInput(Integer.parseInt(input.getText()), position.getI(), position.getJ());
-						checkResponseSudoku(sudoku, responseServer);
+						checkResponseSudoku(sudoku, responseServer, Integer.parseInt(input.getText()), position);
 					} catch (RemoteException re){
 						
 					}
@@ -214,6 +244,11 @@ public class SudokuGUI {
 		});
 	}
 	
+	/**
+	 * O método compareMatrix(int [][]matrixOne, int[][] matrixTwo), compara duas matrizes se ambas forem
+	 * iguais retorna true caso contrário falso.
+	 * @return true ou false, que é um booleano, true caso sejem idênticas e false caso não seja.
+	 * */
 	public boolean compareMatrix(int [][]matrixOne, int[][] matrixTwo) {
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {

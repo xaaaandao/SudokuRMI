@@ -2,6 +2,12 @@ import java.rmi.*;
 import java.rmi.registry.*;
 
 public class Cliente {
+	
+	/**
+	 * O método main(String args[]) inicializa solicita o objeto remoto, e recebe duas matrizes e montas elas
+	 * em uma interface gráfica.
+	 * @return void.
+	 * */
 	public static void main(String args[]){
     	try {
             if (System.getSecurityManager() == null) {
@@ -12,11 +18,11 @@ public class Cliente {
             Registry registry = LocateRegistry.getRegistry("localhost");
             SudokuInterface sudoku = (SudokuInterface)registry.lookup("JogoSudoku");
 
+            /* Monta a interface gráfica a partir dos sudokus recebidos do servidor */
             SudokuGUI sudokuGUI = new SudokuGUI();
             sudokuGUI.buildWindowSudoku(sudoku, sudoku.matrixFields(), sudoku.matrixForPlayer());
-
             
-    	} catch (RemoteException re) {
+    	} catch (RemoteException r) {
         
         } catch (NotBoundException n) {
         
