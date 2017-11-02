@@ -15,6 +15,7 @@ public class Cliente {
             SudokuGUI sudokuGUI = new SudokuGUI();
             sudokuGUI.buildWindowSudoku(sudoku, sudoku.matrixFields(), sudoku.matrixForPlayer());
 
+            
     	} catch (RemoteException re) {
         
         } catch (NotBoundException n) {

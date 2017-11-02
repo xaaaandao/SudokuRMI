@@ -7,14 +7,14 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 	static int [][]matrixAnswers;
 	static int [][]matrixFields;
 	static int [][]matrixPlayer;
-	int row = 9;
+	int rows = 9;
 	int columns = 9;
 	
 	public Sudoku() throws RemoteException {
         super();
-        matrixAnswers = new int[row][columns];
-        matrixPlayer = new int[row][columns];
-        matrixFields = new int[row][columns];
+        matrixAnswers = new int[rows][columns];
+        matrixPlayer = new int[rows][columns];
+        matrixFields = new int[rows][columns];
         matrixAnswers = fillMatrix();
         matrixPlayer = hidePositionsMatrix(matrixAnswers);
         copyMatrix(matrixFields, matrixPlayer);
@@ -22,7 +22,7 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
     }
 	
 	public void copyMatrix(int[][] dest,  int[][] src) {
-		for(int i = 0; i < row; i++) {
+		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++)
 				dest[i][j] = src[i][j];
 		}
@@ -30,7 +30,7 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 	
 	public int countFieldsEmpty() {
 		int count = 0;
-		for(int i = 0; i < row; i++) {
+		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
 				if(matrixPlayer[i][j] == 0)
 					count++;
@@ -40,7 +40,7 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 	}
 	
 	public void printMatrix(int [][]matrix) {
-		for(int i = 0; i < row; i++) {
+		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
 				System.out.print(matrix[i][j] + " ");
 			}
@@ -59,9 +59,9 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 	}
 	
 	public int [][]fillFirstNumber() {
-		int [][]matrix = new int[row][columns];
+		int [][]matrix = new int[rows][columns];
 		int randomNumber = new Random().nextInt((9 - 1) + 1) + 1;
-		for(int i = 0; i < row; i=i+3) {
+		for(int i = 0; i < rows; i=i+3) {
 			matrix[i][0] = randomNumber;
 			matrix[i+1][0] = nextNumber(matrix[i][0]);
 			matrix[i+2][0] = nextNumber(matrix[i+1][0]);
@@ -73,7 +73,7 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 	}
 	
 	public int [][]fillOtherPositions(int [][]matrix) {
-		for(int i = 0; i < row; i++) {
+		for(int i = 0; i < rows; i++) {
 			int number = matrix[i][0];
 			for(int j = 1; j < columns; j++) {
 				number++;
@@ -86,9 +86,9 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 	}
 	
 	public int [][]hidePositionsMatrix(int [][]matrixAnswers) {
-		int [][]matrixUser = new int[row][columns];
+		int [][]matrixUser = new int[rows][columns];
 		int numberOfHide = 3;
-		for (int i = 0; i < row; i++) {
+		for (int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
 				matrixUser[i][j] = matrixAnswers[i][j];
 			}
@@ -103,7 +103,7 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 	}
 
 	public int [][]fillMatrix() {
-		int [][]matrix = new int[row][columns];
+		int [][]matrix = new int[rows][columns];
 		matrix = fillFirstNumber();
 		matrix = fillOtherPositions(matrix);
 		return matrix;
@@ -111,7 +111,7 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 	
 	public int countHit() throws RemoteException {
 		int hit = 0;
-		for(int i = 0; i < row; i++) {
+		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
 				if(matrixFields[i][j] == 0) {
 					if(matrixPlayer[i][j] == matrixAnswers[i][j]) {
@@ -125,7 +125,7 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 
 	public int countError() throws RemoteException {
 		int error = 0;
-		for(int i = 0; i < row; i++) {
+		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
 				if(matrixFields[i][j] == 0) {
 					if(matrixPlayer[i][j] != matrixAnswers[i][j]) {
@@ -158,6 +158,7 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
     	if(matrixPlayer[i][j] == 0) {
     		/* Insiro na matriz */
     		matrixPlayer[i][j] = value;
+    		//System.out.println("entrou");
 			/* Verifico se com essa nova adição todos os campos já estão preenchidos */
     		if(countFieldsEmpty() == 0) {
     			return 1;
@@ -169,6 +170,10 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
     		/* Se sim coloco o valor que o usuário quer e devolvo para todos os meus jogadores */
     		return 3;
     	}
+    }
+    
+    public int countFillFields()  throws RemoteException{
+    	return countFieldsEmpty();
     }
 
 }

@@ -4,15 +4,17 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.text.*;
 import javax.swing.text.DocumentFilter.*;
-
-import javafx.stage.WindowEvent;
-
+import javafx.stage.*;
 import javax.swing.*;
+import javax.swing.JTable.PrintMode;
+
+import java.util.Timer;
 
 public class SudokuGUI {
 	
-	int row = 9;
-	int column = 9;
+	int rows = 9;
+	int columns = 9;
+	SudokuInterface s;
 	
 	/**
      * return 1 -> Todos os campos estão preenchidos (Pergunto para o cliente se ele deseja conferir a resposta)
@@ -24,11 +26,11 @@ public class SudokuGUI {
 			case 1:
 				/* Preciso ter uma interface verificando sim ou não */
 				/* Se sim, peço para o servidor me contar a quantidade de erros e acertos, e imprimo na interface */
-				if (JOptionPane.showConfirmDialog(null, "Would you like to count the number of hits and errors?", "Finish sudoku", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+				if (JOptionPane.showConfirmDialog(null, "Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					try {
 						String stringHit = Integer.toString(sudoku.countHit());
 						String stringError = Integer.toString(sudoku.countError());
-						if (JOptionPane.showConfirmDialog(null, "Hits: " + stringHit +"\nErrors: " +  stringError + "\nWould you like to play again?", "Hits ands errors", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						if (JOptionPane.showConfirmDialog(null, "Acertos: " + stringHit +"\nErros: " +  stringError + "\nVocê deseja jogar novamente?", "Acertos e erros", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 							//Invocar o método que pede novo sudoku
 						} else {
 							//Senão pede fecha o sudoku
@@ -55,39 +57,93 @@ public class SudokuGUI {
 		}
 	}
 	
+	public void printMatrix(int [][]matrix) {
+		System.out.println("Na GUI");
+		for(int i = 0; i < rows; i++) {
+			for(int j = 0; j < columns; j++) {
+				System.out.print(matrix[i][j] + " ");
+			}
+			System.out.print("\n");
+		}
+	}
+	
+	
+	public void copyMatrix(int[][] dest,  int[][] src) {
+		for(int i = 0; i < rows; i++) {
+			for(int j = 0; j < columns; j++)
+				dest[i][j] = src[i][j];
+		}
+	}
+	
 	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrixFields, int[][] matrixUser) {
-		JFrame window = new JFrame("Play Sudoku");
-		JLabel[][] fixContent = new JLabel[row][column];
-		JTextField[][] fillContent = new JTextField[row][column];
+		boolean buildGUI = false;
+		JFrame window = new JFrame("Jogue Sudoku");
+		JLabel[][] fixContent = new JLabel[rows][columns];
+		JTextField[][] fillContent = new JTextField[rows][columns];
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(row, column));
+		panel.setLayout(new GridLayout(rows, columns));
 		
-		for(int i = 0; i < row; i++) {
-			for(int j = 0; j < column; j++) {
-				if(matrixFields[i][j] == 0) {
-					fillContent[i][j] = new JTextField(1);
-				    fillContent[i][j].setHorizontalAlignment(JTextField.CENTER);
-				    if(matrixUser[i][j] > 0) {
-				    	fillContent[i][j].setText(Integer.toString(matrixUser[i][j]));
-				    }
-					PlainDocument document = (PlainDocument) fillContent[i][j].getDocument();
-					checkValue(document);
-				    /* Fields pega a posição que o cliente está preenchendo */
-				    Fields field = new Fields(i, j, fillContent[i][j]);
-				    focusField(sudoku, fillContent[i][j], field);
-					panel.add(fillContent[i][j]);
-				} else {
-					fixContent[i][j] = new JLabel(Integer.toString(matrixFields[i][j]), SwingConstants.CENTER);
-					panel.add(fixContent[i][j]);
+		/* A cada um segundo recebe a matrix do jogador que está no servidor  */
+		Timer timer = new Timer();
+		int [][]matrixUpdate = new int[rows][columns]; 
+		SudokuUpdate sudokuUpdate = new SudokuUpdate(sudoku); 
+		timer.schedule(sudokuUpdate, 0, 1000);
+		
+		
+		while(true) {
+			/* Se eu não tiver montado a GUI monto ela */
+			if(buildGUI == false) {
+				for(int i = 0; i < rows; i++) {
+					for(int j = 0; j < columns; j++) {
+						if(matrixFields[i][j] == 0) {
+							fillContent[i][j] = new JTextField(1);
+						    fillContent[i][j].setHorizontalAlignment(JTextField.CENTER);
+						    if(matrixUser[i][j] > 0) {
+						    	fillContent[i][j].setText(Integer.toString(matrixUser[i][j]));
+						    }
+							PlainDocument document = (PlainDocument) fillContent[i][j].getDocument();
+							checkValue(document);
+						    /* Fields pega a posição que o cliente está preenchendo */
+						    Fields field = new Fields(i, j, fillContent[i][j]);
+						    focusField(sudoku, fillContent[i][j], field);
+							panel.add(fillContent[i][j]);
+						} else {
+							fixContent[i][j] = new JLabel(Integer.toString(matrixFields[i][j]), SwingConstants.CENTER);
+							panel.add(fixContent[i][j]);
+						}
+					}
+				}
+				
+				window.add(panel, BorderLayout.CENTER);
+				window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				window.setSize(600, 600);
+				window.setLocationRelativeTo(null);
+				window.setVisible(true);
+				buildGUI = true;
+			/* Caso já tenha a GUI montada */
+			} else {
+				/* Verifico a matrix que tá sendo recebida é diferenta tá que eu tô */
+				matrixUpdate = sudokuUpdate.getMatrix();
+				if(!compareMatrix(matrixUpdate, matrixUser)) {
+					for(int i = 0; i < rows; i++) {
+						for(int j = 0; j < columns; j++) {
+							if(matrixFields[i][j] == 0) {
+								fillContent[i][j].setText(Integer.toString(matrixUpdate[i][j]));
+							}
+						}
+					}
+					copyMatrix(matrixUser, matrixUpdate);
 				}
 			}
+			/* Verifico se todas as posições estão preenchidas */
+			try {
+				if(sudoku.countFillFields() == 0) {
+					checkResponseSudoku(sudoku, 1);
+				}
+			} catch (RemoteException re) {
+				
+			}
 		}
-		
-		window.add(panel, BorderLayout.CENTER);
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setSize(600, 600);
-		window.setLocationRelativeTo(null);
-		window.setVisible(true);
 	}
 	
 	//Checa se o valor é entre 1 e 9, e é só um dígito
@@ -157,5 +213,18 @@ public class SudokuGUI {
 			}
 		});
 	}
+	
+	public boolean compareMatrix(int [][]matrixOne, int[][] matrixTwo) {
+		for(int i = 0; i < rows; i++) {
+			for(int j = 0; j < columns; j++) {
+				if(matrixOne[i][j] != matrixTwo[i][j]) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 }
+
 
