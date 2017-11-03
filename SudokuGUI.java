@@ -18,7 +18,21 @@ public class SudokuGUI {
 		s = sudoku;
 	}
 	
-	public int allFillFields() {
+	
+	public boolean allFillFields(int [][]matrixFields, JTextField [][]content) {
+		for(int i = 0; i < rows; i++) {
+			for(int j = 0; j < columns; j++) {
+				if(matrixFields[i][j] == 0) {
+					if(content[i][j].getText().length() == 0) {
+						return false;
+					}	
+				}
+			}
+		}
+		return true;
+	}
+	
+/*	public int allFillFields() {
 		if (JOptionPane.showConfirmDialog(null, "Acabou! Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			try {
 				String stringHit = Integer.toString(s.countHit());
@@ -35,7 +49,7 @@ public class SudokuGUI {
 			}
 		} 
 		return 2;
-	}
+	}*/
 	
 	
 	
@@ -120,18 +134,26 @@ public class SudokuGUI {
 		Timer timerSudokuUpdate = new Timer();
 		int [][]matrixUpdate = new int[rows][columns]; 
 		SudokuUpdate sudokuUpdate = new SudokuUpdate(sudoku);
-		timerSudokuUpdate.schedule(sudokuUpdate, 0, 1000);
-		
-		/* A cada um segundo verifica se todas as colunas estão preenchidas */
-		Timer timerSudokuFinish = new Timer();
-		SudokuFinish sudokuFinish = new SudokuFinish(sudoku);
-		long timerFinish = 1000;
-		timerSudokuFinish.schedule(sudokuFinish, 0, timerFinish);
-		
+		timerSudokuUpdate.schedule(sudokuUpdate, 0, 1);
 		
 		while(true) {
 			/* Se eu não tiver montado a GUI monto ela */
 			if(buildGUI == false) {
+				JMenuBar menuBar = new JMenuBar();
+				JMenu optionsMenuItem = new JMenu("Opções");
+				JMenu helpMenuItem = new JMenu("Ajuda");
+				JMenuItem exitMenuItem = new JMenuItem("Sair");
+				JMenuItem contactMenuItem = new JMenuItem("Entre em contato");
+				
+				optionsMenuItem.add(exitMenuItem);
+				helpMenuItem.add(contactMenuItem);
+				
+				menuBar.add(optionsMenuItem);
+				menuBar.add(helpMenuItem);
+				
+				exitMenuItemListener(exitMenuItem);
+				contactMenuItemListener(contactMenuItem);
+				
 				for(int i = 0; i < rows; i++) {
 					for(int j = 0; j < columns; j++) {
 						if(matrixFields[i][j] == 0) {
@@ -153,6 +175,7 @@ public class SudokuGUI {
 					}
 				}
 				
+				window.setJMenuBar(menuBar);
 				window.add(panel, BorderLayout.CENTER);
 				window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				window.setSize(600, 600);
@@ -163,7 +186,7 @@ public class SudokuGUI {
 			} else {
 				/* Verifico a matrix que tá sendo recebida é diferenta tá que eu tô */
 				matrixUpdate = sudokuUpdate.getMatrix();
-				if(!compareMatrix(matrixUpdate, matrixUser)) {
+				if(!compareMatrix(matrixUpdate, matrixUser)){
 					for(int i = 0; i < rows; i++) {
 						for(int j = 0; j < columns; j++) {
 							if(matrixFields[i][j] == 0) {
@@ -178,23 +201,31 @@ public class SudokuGUI {
 					copyMatrix(matrixUser, matrixUpdate);
 				}
 			}
-			/* Verifico se todas as posições estão preenchidas */
-			//System.out.println("acabou? "+sudokuFinish.getIsFinish());
-			if(sudokuFinish.getIsFinish()) {
-				int responseFinish = allFillFields();
-				if(responseFinish == 1) {
-					//New game
-				} else if(responseFinish == 2){
-					//System.out.println("aq");
-					if(timerFinish == 1000) {
-						timerFinish = 5000;
-					} else {
-						timerFinish = timerFinish + 5000;
+			if(allFillFields(matrixFields, fillContent)) {
+				if (JOptionPane.showConfirmDialog(null, "Acabou! Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					try {
+						String stringHit = Integer.toString(s.countHit());
+						String stringError = Integer.toString(s.countError());
+						if (JOptionPane.showConfirmDialog(null, "Acertos: " + stringHit +"\nErros: " +  stringError + "\nVocê deseja jogar novamente?", "Acertos e erros", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+							//Invocar o método que pede novo sudoku
+						} else {
+							System.exit(1);
+						}
+					} catch (RemoteException re){
+						
 					}
-					timerSudokuFinish.cancel();
-					timerSudokuFinish = new Timer();
-					sudokuFinish = new SudokuFinish(sudoku); 
-					timerSudokuFinish.schedule(sudokuFinish, timerFinish);
+				} else {
+					/* Caso o usuário não queira visualizar os acertos significa que quero alterar algo,
+					 * mas decidiu trocar um valor, então ele terá 10 segundos para trocar.
+					 * Caso não altere nada, logo acabar os dez segundos irá ser solicitado se ele deseja conferir o resultado.
+					 * Caso altere um valor nesses 10 segundos, ele irá verificar a corretude.
+					 * Caso altere mais de um valor nesses 10 segundos, ele não irá verificar, mas esperar todas as posições estarem novamente completas. 
+					 * */
+					try {
+						Thread.sleep(10000);	
+					} catch (InterruptedException i) {
+						
+					}
 				}
 			}
 		}
@@ -300,7 +331,24 @@ public class SudokuGUI {
 		}
 		return true;
 	}
+
+	public void contactMenuItemListener(JMenuItem contactMenuItem){
+		contactMenuItem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent ev) {
+		    	JOptionPane.showMessageDialog (null, "Problemas, dúvida e sugestões?\nEntre em contato conosco pelo e-mail: alexandre.ykz@gmail.com", "Entre em contato conosco", JOptionPane.INFORMATION_MESSAGE);
+
+		    }
+		});
+	}
 	
+	public void exitMenuItemListener(JMenuItem exitMenuItem){
+		exitMenuItem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent ev) {
+		            System.exit(1);
+		    }
+		});
+
+	}
 }
 
 
