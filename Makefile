@@ -13,7 +13,7 @@ server:
 	java -Djava.security.policy=policy.txt -Djava.rmi.server.codebase=file: Servidor
 
 client:
-	javac SudokuUpdate.java SudokuGUI.java Fields.java Cliente.java
+	javac SudokuFinish.java SudokuUpdate.java SudokuGUI.java Fields.java Cliente.java
 	java -Djava.security.policy=policy.txt Cliente
 
 git:

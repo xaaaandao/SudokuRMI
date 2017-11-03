@@ -14,6 +14,31 @@ public class SudokuGUI {
 	int columns = 9;
 	SudokuInterface s;
 	
+	public SudokuGUI(SudokuInterface sudoku) {
+		s = sudoku;
+	}
+	
+	public int allFillFields() {
+		if (JOptionPane.showConfirmDialog(null, "Acabou! Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+			try {
+				String stringHit = Integer.toString(s.countHit());
+				String stringError = Integer.toString(s.countError());
+				if (JOptionPane.showConfirmDialog(null, "Acertos: " + stringHit +"\nErros: " +  stringError + "\nVocê deseja jogar novamente?", "Acertos e erros", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					//Invocar o método que pede novo sudoku
+					return 1;
+				} else {
+					//Senão pede fecha o sudoku
+					System.exit(1);
+				}
+			} catch (RemoteException re){
+				
+			}
+		} 
+		return 2;
+	}
+	
+	
+	
 	/**
 	 * O método checkResponseSudoku(SudokuInterface sudoku, int response, int value, Fields field), interpreta
 	 * a resposta que foi dada ao servidor, se for um significa que todos os campos já foram preenchidos, se for
@@ -26,20 +51,7 @@ public class SudokuGUI {
 			case 1:
 				/* Preciso ter uma interface verificando sim ou não */
 				/* Se sim, peço para o servidor me contar a quantidade de erros e acertos, e imprimo na interface */
-				if (JOptionPane.showConfirmDialog(null, "Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-					try {
-						String stringHit = Integer.toString(sudoku.countHit());
-						String stringError = Integer.toString(sudoku.countError());
-						if (JOptionPane.showConfirmDialog(null, "Acertos: " + stringHit +"\nErros: " +  stringError + "\nVocê deseja jogar novamente?", "Acertos e erros", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-							//Invocar o método que pede novo sudoku
-						} else {
-							//Senão pede fecha o sudoku
-							System.exit(1);
-						}
-					} catch (RemoteException re){
-						
-					}
-				}
+				
 				break;
 			case 2:
 				/* Valor adicionado com sucesso */
@@ -105,10 +117,16 @@ public class SudokuGUI {
 		panel.setLayout(new GridLayout(rows, columns));
 		
 		/* A cada um segundo recebe a matrix do jogador que está no servidor  */
-		Timer timer = new Timer();
+		Timer timerSudokuUpdate = new Timer();
 		int [][]matrixUpdate = new int[rows][columns]; 
-		SudokuUpdate sudokuUpdate = new SudokuUpdate(sudoku); 
-		timer.schedule(sudokuUpdate, 0, 1000);
+		SudokuUpdate sudokuUpdate = new SudokuUpdate(sudoku);
+		timerSudokuUpdate.schedule(sudokuUpdate, 0, 1000);
+		
+		/* A cada um segundo verifica se todas as colunas estão preenchidas */
+		Timer timerSudokuFinish = new Timer();
+		SudokuFinish sudokuFinish = new SudokuFinish(sudoku);
+		long timerFinish = 1000;
+		timerSudokuFinish.schedule(sudokuFinish, 0, timerFinish);
 		
 		
 		while(true) {
@@ -143,15 +161,13 @@ public class SudokuGUI {
 				buildGUI = true;
 			/* Caso já tenha a GUI montada */
 			} else {
+				System.out.println("passo daqui");
 				/* Verifico a matrix que tá sendo recebida é diferenta tá que eu tô */
 				matrixUpdate = sudokuUpdate.getMatrix();
-				//System.out.println("aqui");
 				if(!compareMatrix(matrixUpdate, matrixUser)) {
-					//System.out.println("ok");
 					for(int i = 0; i < rows; i++) {
 						for(int j = 0; j < columns; j++) {
 							if(matrixFields[i][j] == 0) {
-								//System.out.println("entrou");
 								if(matrixUpdate[i][j] > 0) {
 									fillContent[i][j].setText(Integer.toString(matrixUpdate[i][j]));	
 								} else {
@@ -164,13 +180,24 @@ public class SudokuGUI {
 				}
 			}
 			/* Verifico se todas as posições estão preenchidas */
-			/*try {
-				if(sudoku.countFillFields() == 0) {
-					checkResponseSudoku(sudoku, 1, 0, null);
+			System.out.println("acabou? "+sudokuFinish.getIsFinish());
+			if(sudokuFinish.getIsFinish()) {
+				int responseFinish = allFillFields();
+				if(responseFinish == 1) {
+					//New game
+				} else if(responseFinish == 2){
+					System.out.println("aq");
+					if(timerFinish == 1000) {
+						timerFinish = 5000;
+					} else {
+						timerFinish = timerFinish + 5000;
+					}
+					timerSudokuFinish.cancel();
+					timerSudokuFinish = new Timer();
+					sudokuFinish = new SudokuFinish(sudoku); 
+					timerSudokuFinish.schedule(sudokuFinish, timerFinish);
 				}
-			} catch (RemoteException re) {
-				
-			}*/
+			}
 		}
 	}
 	

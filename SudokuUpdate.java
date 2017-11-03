@@ -36,7 +36,6 @@ public class SudokuUpdate extends TimerTask {
 	 * @return void.
 	 * */
 	public void printMatrix(int [][]matrix) {
-		System.out.println("Classe a parte");
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
 				System.out.print(matrix[i][j] + " ");
@@ -74,6 +73,5 @@ public class SudokuUpdate extends TimerTask {
     public int[][] getMatrix(){
     	return matrixUpdate;
     }
-    
     
 }
