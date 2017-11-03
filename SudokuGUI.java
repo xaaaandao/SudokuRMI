@@ -128,10 +128,27 @@ public class SudokuGUI {
 		long timerFinish = 1000;
 		timerSudokuFinish.schedule(sudokuFinish, 0, timerFinish);
 		
+		JMenuBar menuBar = new JMenuBar();
+		JMenu optionsMenu = new JMenu("Opções");
+		JMenuItem finishMenuItem = new JMenuItem("Fim de jogo");
+		JMenuItem exitMenuItem = new JMenuItem("Sair");
+		JMenu helpMenu = new JMenu("Ajuda");
+		JMenuItem contactMenuItem = new JMenuItem("Entre em contato");
 		
 		while(true) {
 			/* Se eu não tiver montado a GUI monto ela */
 			if(buildGUI == false) {
+				optionsMenu.add(finishMenuItem);
+				optionsMenu.add(exitMenuItem);
+
+				helpMenu.add(contactMenuItem);
+				
+				menuBar.add(optionsMenu);
+				menuBar.add(helpMenu);
+
+	    		finishMenuItemListener(sudoku, finishMenuItem);
+				exitMenuItemListener(exitMenuItem);
+				contactMenuItemListener(contactMenuItem);
 				for(int i = 0; i < rows; i++) {
 					for(int j = 0; j < columns; j++) {
 						if(matrixFields[i][j] == 0) {
@@ -153,6 +170,7 @@ public class SudokuGUI {
 					}
 				}
 				
+				window.setJMenuBar(menuBar);
 				window.add(panel, BorderLayout.CENTER);
 				window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				window.setSize(600, 600);
@@ -160,8 +178,8 @@ public class SudokuGUI {
 				window.setVisible(true);
 				buildGUI = true;
 			/* Caso já tenha a GUI montada */
-			} else {
-				System.out.println("passo daqui");
+			} else {		
+				//System.out.println("passo daqui");
 				/* Verifico a matrix que tá sendo recebida é diferenta tá que eu tô */
 				matrixUpdate = sudokuUpdate.getMatrix();
 				if(!compareMatrix(matrixUpdate, matrixUser)) {
@@ -180,13 +198,13 @@ public class SudokuGUI {
 				}
 			}
 			/* Verifico se todas as posições estão preenchidas */
-			System.out.println("acabou? "+sudokuFinish.getIsFinish());
+			//System.out.println("acabou? "+sudokuFinish.getIsFinish());
 			if(sudokuFinish.getIsFinish()) {
 				int responseFinish = allFillFields();
 				if(responseFinish == 1) {
 					//New game
 				} else if(responseFinish == 2){
-					System.out.println("aq");
+					//System.out.println("aq");
 					if(timerFinish == 1000) {
 						timerFinish = 5000;
 					} else {
@@ -300,6 +318,33 @@ public class SudokuGUI {
 			}
 		}
 		return true;
+	}
+	
+	public void exitMenuItemListener(JMenuItem exitMenuItem){
+		exitMenuItem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent ev) {
+		            System.exit(1);
+		    }
+		});
+
+	}
+	
+	
+	public void contactMenuItemListener(JMenuItem contactMenuItem){
+		contactMenuItem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent ev) {
+		    	JOptionPane.showMessageDialog (null, "Problemas, dúvida e sugestões?\nEntre em contato conosco pelo e-mail: alexandre.ykz@gmail.com", "Entre em contato conosco", JOptionPane.INFORMATION_MESSAGE);
+
+		    }
+		});
+	}
+	
+	public void finishMenuItemListener(SudokuInterface sudoku, JMenuItem finishMenuItem){
+		finishMenuItem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent ev) {
+	    		allFillFields();
+		    }
+		});
 	}
 	
 }
