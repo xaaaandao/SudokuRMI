@@ -148,6 +148,8 @@ public class SudokuGUI {
 						    fillContent[i][j].setHorizontalAlignment(JTextField.CENTER);
 						    if(matrixUser[i][j] > 0) {
 						    	fillContent[i][j].setText(Integer.toString(matrixUser[i][j]));
+						    } else {
+						    	fillContent[i][j].setText("");
 						    }
 							PlainDocument document = (PlainDocument) fillContent[i][j].getDocument();
 							checkValue(document);
@@ -179,8 +181,10 @@ public class SudokuGUI {
 							if(matrixFields[i][j] == 0) {
 								if(matrixUpdate[i][j] > 0) {
 									fillContent[i][j].setText(Integer.toString(matrixUpdate[i][j]));	
+									matrixUser[i][j] = matrixUpdate[i][j];
 								} else {
 									fillContent[i][j].setText("");
+									matrixUser[i][j] = 0;
 								}
 							}
 						}
