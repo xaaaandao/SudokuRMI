@@ -29,21 +29,7 @@ public class SudokuUpdate extends TimerTask {
 		s = sudoku;
 		matrixUpdate = new int[rows][columns];
 	}
-	
-	
-	/**
-	 * O método printMatrix(int [][]matrix), imprime a variável matrix.
-	 * @return void.
-	 * */
-	public void printMatrix(int [][]matrix) {
-		for(int i = 0; i < rows; i++) {
-			for(int j = 0; j < columns; j++) {
-				System.out.print(matrix[i][j] + " ");
-			}
-			System.out.print("\n");
-		}
-	}
-	
+		
 	/**
 	 * O método run(), obtêm a matriz que está sendo preenchida
 	 * pelos jogadores no servidor e atribui ela como sendo um atributo seu.
@@ -51,7 +37,6 @@ public class SudokuUpdate extends TimerTask {
 	 * */
     public void run() {
     	try {
-    		//printMatrix(s.matrixForPlayer());
     		setMatrix(s.matrixForPlayer());
     	} catch (RemoteException re) {
     		

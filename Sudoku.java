@@ -216,29 +216,24 @@ public class Sudoku extends UnicastRemoteObject implements SudokuInterface{
 	 * se a posição que o usuário deseja está vazia, se sim preenche e verifica se todos os campos
 	 * estão preenchidos. Caso contrário retorna verifica se o jogador deseja ou não sobrescrever 
 	 * o valor que está lá no sudoku.
-	 * @return 1 é um inteiro, que signfica que todos os campos estão preenchidos.
-	 * @return 2 é um inteiro, que signfica que o valor foi adiconado com suceso.
-	 * @return 3 é um inteiro, que signfica que a posição deseja já está preenchida.
+	 * @return 1 é um inteiro, que signfica que o valor foi adicionado com sucesso.
+	 * @return 2 é um inteiro, que signfica que o valor que o jogador está tentando inserir é igual ao que está na matriz.
+	 * @return 3 é um inteiro, que signfica que o valor que o jogador está tentando inserir é difernete ao que está na matriz.
 	 * */
 	public int checkInput(int value, int i, int j) throws RemoteException{
     	/* Verifico se a posição que o usuário está tentando inserir está vazia */
     	if(matrixPlayer[i][j] == 0) {
     		/* Insiro na matriz */
     		matrixPlayer[i][j] = value;
-			/* Verifico se com essa nova adição todos os campos já estão preenchidos */
-    		if(countFieldsEmpty() == 0) {
-    			return 1;
-    		}
-    		/* Adicionei o valor, mas todas as posições ainda não estão preenchidas */
-    		return 2;
+    		return 1;
     	/* Caso a posição já está preenchida */
     	} else {
     		/* Verifico se eu quero sobrescrever com o meu valor */
     		/* Se sim coloco o valor que o usuário quer e devolvo para todos os meus jogadores */
     		if(matrixPlayer[i][j] == value){
-        		return 3;	
+        		return 2;	
     		}
-    		return 4;
+    		return 3;
     	}
     }
     

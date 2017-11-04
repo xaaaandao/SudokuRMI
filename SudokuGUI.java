@@ -13,12 +13,22 @@ public class SudokuGUI {
 	int rows = 9;
 	int columns = 9;
 	SudokuInterface s;
-	
+		
+	/**
+	 * O construtor SudokuGUI(SudokuInterface sudoku), atribui o parâmetro sudoku
+	 * a um atributo da classe.
+	 * */
 	public SudokuGUI(SudokuInterface sudoku) {
 		s = sudoku;
 	}
 	
-	
+	/**
+	 * O método allFillFields(int [][]matrixFields, JTextField [][]content), recebe duas matrizes,
+	 * uma sendo a matriz de campos, e outra matriz de JTextField, em que na matriz verificamos 
+	 * se o conteúdo do campo é maior que zero, tem algo preenchido, caso contrário, não tem algo 
+	 * preenchido, então nem todos os campos estão preenchidos.
+	 * @return true ou false, true caso todos os campos estejam preenchidos, false caso não esteja preeenchido.
+	 * */
 	public boolean allFillFields(int [][]matrixFields, JTextField [][]content) {
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
@@ -32,27 +42,6 @@ public class SudokuGUI {
 		return true;
 	}
 	
-/*	public int allFillFields() {
-		if (JOptionPane.showConfirmDialog(null, "Acabou! Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-			try {
-				String stringHit = Integer.toString(s.countHit());
-				String stringError = Integer.toString(s.countError());
-				if (JOptionPane.showConfirmDialog(null, "Acertos: " + stringHit +"\nErros: " +  stringError + "\nVocê deseja jogar novamente?", "Acertos e erros", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-					//Invocar o método que pede novo sudoku
-					return 1;
-				} else {
-					//Senão pede fecha o sudoku
-					System.exit(1);
-				}
-			} catch (RemoteException re){
-				
-			}
-		} 
-		return 2;
-	}*/
-	
-	
-	
 	/**
 	 * O método checkResponseSudoku(SudokuInterface sudoku, int response, int value, Fields field), interpreta
 	 * a resposta que foi dada ao servidor, se for um significa que todos os campos já foram preenchidos, se for
@@ -63,17 +52,12 @@ public class SudokuGUI {
 	public void checkResponseSudoku(SudokuInterface sudoku, int response, int value, Fields field) {
 		switch (response) {
 			case 1:
-				/* Preciso ter uma interface verificando sim ou não */
-				/* Se sim, peço para o servidor me contar a quantidade de erros e acertos, e imprimo na interface */
-				
-				break;
-			case 2:
 				/* Valor adicionado com sucesso */
 				break;
-			case 3:
+			case 2:
 				/* Caso que o jogador esteja sobescrevendo seja igual ao valor que já esteja lá */
 				break;
-			case 4:
+			case 3:
 				/* Caso que o jogador esteja sobescrevendo seja diferente ao valor que já esteja lá */
 				if (JOptionPane.showConfirmDialog(null, "Você deseja sobrescrever o valor?", "Posição já preenchida", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					try {
@@ -120,6 +104,9 @@ public class SudokuGUI {
 	 * verifica se na posição que está sendo percorrida é zero se for zero vai ser um JTextField, caso contrário
 	 * JLabel. Caso a interface gráfica já esteja montada, verifica se matriz que está sendo exibida e a matriz
 	 * que está sendo preenchida pelos usuários no servidor é diferente, se for diferente atualiza com os novos valores.
+	 * Verifica se todos os campos estão preenchidos, se sim pergunta se o jogador se quer verificar 
+	 * os acertos e erros, se não continua jogando e após daqui 10 segundos verifica se todas as posições 
+	 * estão preenchidas novamente. 
 	 * @return void.
 	 * */
 	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrixFields, int[][] matrixUser) {
@@ -332,6 +319,12 @@ public class SudokuGUI {
 		return true;
 	}
 
+	/**
+	 * O método contactMenuItemListener(JMenuItem contactMenuItem), verifica
+	 * se o cursor foi clicado no campo que foi passado por parâmetro,
+	 * se sim aparece uma janela com os contatos da pessoa que desenvolveu.
+	 * @return void.
+	 * */
 	public void contactMenuItemListener(JMenuItem contactMenuItem){
 		contactMenuItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent ev) {
@@ -340,7 +333,13 @@ public class SudokuGUI {
 		    }
 		});
 	}
-	
+
+	/**
+	 * O método exitMenuItemListener(JMenuItem exitMenuItem), verifica
+	 * se o cursor foi clicado no campo que foi passado por parâmetro,
+	 * se sim fecha a janela.
+	 * @return void.
+	 * */
 	public void exitMenuItemListener(JMenuItem exitMenuItem){
 		exitMenuItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent ev) {
