@@ -93,7 +93,8 @@ public class SudokuGUI {
 	 * */
 	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrixFields, int[][] matrixUser) throws IOException{
 		List<Fields> listOfFields = new ArrayList<>();
-
+		int[][] matrixUpdate = new int[rows][columns];
+		
 		JFrame window = new JFrame("Jogue Sudoku");
 		JLabel[][] fixContent = new JLabel[rows][columns];
 		JTextField[][] fillContent = new JTextField[rows][columns];
@@ -111,7 +112,6 @@ public class SudokuGUI {
 		menuBar.add(helpMenuItem);
 		exitMenuItemListener(exitMenuItem);
 		contactMenuItemListener(contactMenuItem);
-		timerSudokuUpdate.schedule(sudokuUpdate, 0, 1);
 		loadListOfFields(listOfFields, matrixFields);
 		
 		for(int i = 0; i < rows; i++) {
@@ -165,7 +165,6 @@ public class SudokuGUI {
 						matrixUser[i][j] = 0;
 					}
 				} 
-				copyMatrix(matrixUser, matrixUpdate);
 			}
 			if(sudokuFinish(listOfFields, matrixUser, fillContent)) {
 				if (JOptionPane.showConfirmDialog(null, "Acabou! Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -187,16 +186,27 @@ public class SudokuGUI {
 					 * Caso altere um valor nesses 10 segundos, ele irá verificar a corretude.
 					 * Caso altere mais de um valor nesses 10 segundos, ele não irá verificar, mas esperar todas as posições estarem novamente completas. 
 					 * */
-					try {
-						Thread.sleep(10000);	
-					} catch (InterruptedException i) {
-						
-					}
+					threadSleep(10000);
 				}
 			}
 		}
 	}
 	
+	public void threadSleep(long time) {
+		try {
+			Thread.sleep(time);	
+		} catch (InterruptedException i) {
+			
+		}
+	}
+	
+	/**
+	 * O método sudokuFinish(List<Fields> listOfFields, int [][]matrixUser, JTextField [][]content),
+	 * verifica se a matriz do usuário e o campo tem valores ou tem um caractere, se sim retorna
+	 * true, caso contrário retorna false.
+	 * @return true ou false, true caso todas as posições de ambas as matrizes estejem preenchidas, 
+	 * false caso não estejem todas preenchidas.
+	 * */
 	public boolean sudokuFinish(List<Fields> listOfFields, int [][]matrixUser, JTextField [][]content) {
 		for(Fields f : listOfFields) {
 			int i = f.getI();
@@ -208,7 +218,11 @@ public class SudokuGUI {
 		return true;
 	}
 	
-	
+	/**
+	 * O método loadListOfFields(List<Fields> listOfFields, int [][]matrixFields), carrega as posições que 
+	 * dos campos que devem ser preenchidos, em uma lista.
+	 * @return void.
+	 * */
 	public void loadListOfFields(List<Fields> listOfFields, int [][]matrixFields) {
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
