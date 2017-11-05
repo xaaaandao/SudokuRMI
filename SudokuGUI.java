@@ -2,10 +2,13 @@ import java.rmi.*;
 import java.rmi.registry.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import javax.swing.text.*;
 import javax.swing.text.DocumentFilter.*;
 import javafx.stage.*;
 import javax.swing.*;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Timer;
 
 public class SudokuGUI {
@@ -21,27 +24,7 @@ public class SudokuGUI {
 	public SudokuGUI(SudokuInterface sudoku) {
 		s = sudoku;
 	}
-	
-	/**
-	 * O método allFillFields(int [][]matrixFields, JTextField [][]content), recebe duas matrizes,
-	 * uma sendo a matriz de campos, e outra matriz de JTextField, em que na matriz verificamos 
-	 * se o conteúdo do campo é maior que zero, tem algo preenchido, caso contrário, não tem algo 
-	 * preenchido, então nem todos os campos estão preenchidos.
-	 * @return true ou false, true caso todos os campos estejam preenchidos, false caso não esteja preeenchido.
-	 * */
-	public boolean allFillFields(int [][]matrixFields, JTextField [][]content) {
-		for(int i = 0; i < rows; i++) {
-			for(int j = 0; j < columns; j++) {
-				if(matrixFields[i][j] == 0) {
-					if(content[i][j].getText().length() == 0) {
-						return false;
-					}	
-				}
-			}
-		}
-		return true;
-	}
-	
+
 	/**
 	 * O método checkResponseSudoku(SudokuInterface sudoku, int response, int value, Fields field), interpreta
 	 * a resposta que foi dada ao servidor, se for um significa que todos os campos já foram preenchidos, se for
@@ -77,7 +60,6 @@ public class SudokuGUI {
 	 * @return void.
 	 * */
 	public void printMatrix(int [][]matrix) {
-		System.out.println("Na GUI");
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
 				System.out.print(matrix[i][j] + " ");
@@ -109,90 +91,83 @@ public class SudokuGUI {
 	 * estão preenchidas novamente. 
 	 * @return void.
 	 * */
-	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrixFields, int[][] matrixUser) {
-		boolean buildGUI = false;
+	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrixFields, int[][] matrixUser) throws IOException{
+		List<Fields> listOfFields = new ArrayList<>();
+
 		JFrame window = new JFrame("Jogue Sudoku");
 		JLabel[][] fixContent = new JLabel[rows][columns];
 		JTextField[][] fillContent = new JTextField[rows][columns];
 		JPanel panel = new JPanel();
+		JMenuBar menuBar = new JMenuBar();
+		JMenu optionsMenuItem = new JMenu("Opções");
+		JMenu helpMenuItem = new JMenu("Ajuda");
+		JMenuItem exitMenuItem = new JMenuItem("Sair");
+		JMenuItem contactMenuItem = new JMenuItem("Entre em contato");
+
 		panel.setLayout(new GridLayout(rows, columns));
-		
-		/* A cada um segundo recebe a matrix do jogador que está no servidor  */
-		Timer timerSudokuUpdate = new Timer();
-		int [][]matrixUpdate = new int[rows][columns]; 
-		SudokuUpdate sudokuUpdate = new SudokuUpdate(sudoku);
+		optionsMenuItem.add(exitMenuItem);
+		helpMenuItem.add(contactMenuItem);
+		menuBar.add(optionsMenuItem);
+		menuBar.add(helpMenuItem);
+		exitMenuItemListener(exitMenuItem);
+		contactMenuItemListener(contactMenuItem);
 		timerSudokuUpdate.schedule(sudokuUpdate, 0, 1);
+		loadListOfFields(listOfFields, matrixFields);
 		
-		while(true) {
-			/* Se eu não tiver montado a GUI monto ela */
-			if(buildGUI == false) {
-				JMenuBar menuBar = new JMenuBar();
-				JMenu optionsMenuItem = new JMenu("Opções");
-				JMenu helpMenuItem = new JMenu("Ajuda");
-				JMenuItem exitMenuItem = new JMenuItem("Sair");
-				JMenuItem contactMenuItem = new JMenuItem("Entre em contato");
-				
-				optionsMenuItem.add(exitMenuItem);
-				helpMenuItem.add(contactMenuItem);
-				
-				menuBar.add(optionsMenuItem);
-				menuBar.add(helpMenuItem);
-				
-				exitMenuItemListener(exitMenuItem);
-				contactMenuItemListener(contactMenuItem);
-				
-				for(int i = 0; i < rows; i++) {
-					for(int j = 0; j < columns; j++) {
-						if(matrixFields[i][j] == 0) {
-							fillContent[i][j] = new JTextField(1);
-						    fillContent[i][j].setHorizontalAlignment(JTextField.CENTER);
-						    if(matrixUser[i][j] > 0) {
-						    	fillContent[i][j].setText(Integer.toString(matrixUser[i][j]));
-						    } else {
-						    	fillContent[i][j].setText("");
-						    }
-							PlainDocument document = (PlainDocument) fillContent[i][j].getDocument();
-							checkValue(document);
-						    /* Fields pega a posição que o cliente está preenchendo */
-						    Fields field = new Fields(i, j, fillContent[i][j]);
-						    focusField(sudoku, fillContent[i][j], field);
-							panel.add(fillContent[i][j]);
-						} else {
-							fixContent[i][j] = new JLabel(Integer.toString(matrixFields[i][j]), SwingConstants.CENTER);
-							panel.add(fixContent[i][j]);
-						}
-					}
-				}
-				
-				window.setJMenuBar(menuBar);
-				window.add(panel, BorderLayout.CENTER);
-				window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				window.setSize(600, 600);
-				window.setLocationRelativeTo(null);
-				window.setVisible(true);
-				buildGUI = true;
-			/* Caso já tenha a GUI montada */
-			} else {
-				/* Verifico a matrix que tá sendo recebida é diferenta tá que eu tô */
-				matrixUpdate = sudokuUpdate.getMatrix();
-				if(!compareMatrix(matrixUpdate, matrixUser)){
-					for(int i = 0; i < rows; i++) {
-						for(int j = 0; j < columns; j++) {
-							if(matrixFields[i][j] == 0) {
-								if(matrixUpdate[i][j] > 0) {
-									fillContent[i][j].setText(Integer.toString(matrixUpdate[i][j]));	
-									matrixUser[i][j] = matrixUpdate[i][j];
-								} else {
-									fillContent[i][j].setText("");
-									matrixUser[i][j] = 0;
-								}
-							}
-						}
-					}
-					copyMatrix(matrixUser, matrixUpdate);
+		for(int i = 0; i < rows; i++) {
+			for(int j = 0; j < columns; j++) {
+				if(matrixFields[i][j] == 0) {
+					fillContent[i][j] = new JTextField(1);
+				    fillContent[i][j].setHorizontalAlignment(JTextField.CENTER);
+				    if(matrixUser[i][j] > 0) {
+				    	fillContent[i][j].setText(Integer.toString(matrixUser[i][j]));
+				    	matrixUser[i][j] = matrixUser[i][j];
+				    } else {
+				    	fillContent[i][j].setText("");
+				    	matrixUser[i][j] = 0;
+				    }
+					PlainDocument document = (PlainDocument) fillContent[i][j].getDocument();
+					checkValue(document);
+				    /* Fields pega a posição que o cliente está preenchendo */
+				    Fields field = new Fields(i, j, fillContent[i][j]);
+				    focusField(sudoku, fillContent[i][j], field);
+					panel.add(fillContent[i][j]);
+				} else {
+					fixContent[i][j] = new JLabel(Integer.toString(matrixFields[i][j]), SwingConstants.CENTER);
+					panel.add(fixContent[i][j]);
 				}
 			}
-			if(allFillFields(matrixFields, fillContent)) {
+		}
+		
+		window.setJMenuBar(menuBar);
+		window.add(panel, BorderLayout.CENTER);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setSize(600, 600);
+		window.setLocationRelativeTo(null);
+		window.setVisible(true);
+		
+		while(true) {
+			//matrixUpdate = sudokuUpdate.getMatrix();
+			try {
+				matrixUpdate = sudoku.matrixForPlayer(); 
+			} catch (RemoteException r) {
+				
+			}
+			if(!compareMatrix(matrixUpdate, matrixUser)){
+				for(Fields f : listOfFields) {
+					int i = f.getI();
+					int j = f.getJ();
+					if(matrixUpdate[i][j] > 0) {
+						fillContent[i][j].setText(Integer.toString(matrixUpdate[i][j]));	
+						matrixUser[i][j] = matrixUpdate[i][j];
+					} else {
+						fillContent[i][j].setText("");
+						matrixUser[i][j] = 0;
+					}
+				} 
+				copyMatrix(matrixUser, matrixUpdate);
+			}
+			if(sudokuFinish(listOfFields, matrixUser, fillContent)) {
 				if (JOptionPane.showConfirmDialog(null, "Acabou! Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					try {
 						String stringHit = Integer.toString(s.countHit());
@@ -221,6 +196,30 @@ public class SudokuGUI {
 			}
 		}
 	}
+	
+	public boolean sudokuFinish(List<Fields> listOfFields, int [][]matrixUser, JTextField [][]content) {
+		for(Fields f : listOfFields) {
+			int i = f.getI();
+			int j = f.getJ();
+			if(matrixUser[i][j] == 0 && content[i][j].getText().length() == 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	public void loadListOfFields(List<Fields> listOfFields, int [][]matrixFields) {
+		for(int i = 0; i < rows; i++) {
+			for(int j = 0; j < columns; j++) {
+				if(matrixFields[i][j] == 0) {
+					Fields f = new Fields(i, j, null);
+					listOfFields.add(f);
+				}
+			}
+		}
+	}
+	
 	
 	/**
 	 * O método checkValue(PlainDocument document), verifica simplesmente se o valor que foi colocado no JTextField
