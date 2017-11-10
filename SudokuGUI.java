@@ -15,6 +15,8 @@ public class SudokuGUI {
 	
 	int rows = 9;
 	int columns = 9;
+	static int currentHits = 0;
+	static int currentErrors = 0;
 	SudokuInterface s;
 		
 	/**
@@ -80,6 +82,30 @@ public class SudokuGUI {
 		}
 	}
 	
+	public String levelForSudoku(SudokuInterface sudoku){
+		try {
+			int level = sudoku.currentId();
+			if(level >= 0 && level <= 2)
+				return "Jogue Sudoku (Nível Fácil)";
+			else if(level >= 3 && level <= 5)
+				return "Jogue Sudoku (Nível Médio)";
+			else if(level >= 7 && level <= 8)
+				return "Jogue Sudoku (Nível Díficil)";
+		} catch (RemoteException r) {
+			
+		}
+		return null;
+	}
+	
+	public int currentLevelForSudoku(SudokuInterface sudoku){
+		try {
+			return sudoku.currentId();
+		} catch (RemoteException r) {
+			
+		}
+		return -1;
+	}
+	
 	/**
 	 * O método buildWindowSudoku(SudokuInterface sudoku, int [][]matrixFields, int[][] matrixUser), primeiramente
 	 * verifica se a interface gráfica já foi criada ou não, se já tiver sido criada percorre na matrixFields
@@ -95,7 +121,7 @@ public class SudokuGUI {
 		List<Fields> listOfFields = new ArrayList<>();
 		int[][] matrixUpdate = new int[rows][columns];
 		
-		JFrame window = new JFrame("Jogue Sudoku");
+		JFrame window = new JFrame(levelForSudoku(sudoku));
 		JLabel[][] fixContent = new JLabel[rows][columns];
 		JTextField[][] fillContent = new JTextField[rows][columns];
 		JPanel panel = new JPanel();
@@ -113,6 +139,8 @@ public class SudokuGUI {
 		exitMenuItemListener(exitMenuItem);
 		contactMenuItemListener(contactMenuItem);
 		loadListOfFields(listOfFields, matrixFields);
+		
+		int currentId = currentLevelForSudoku(sudoku);
 		
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
@@ -169,10 +197,23 @@ public class SudokuGUI {
 			if(sudokuFinish(listOfFields, matrixUser, fillContent)) {
 				if (JOptionPane.showConfirmDialog(null, "Acabou! Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					try {
-						String stringHit = Integer.toString(s.numberOfHits());
-						String stringError = Integer.toString(s.numberOfErrors());
+						int numberOfHits = s.numberOfHits();
+						int numberOfErrors = s.numberOfErrors();
+						String stringHit = Integer.toString(numberOfHits);
+						String stringError = Integer.toString(numberOfErrors);
 						if (JOptionPane.showConfirmDialog(null, "Acertos: " + stringHit +"\nErros: " +  stringError + "\nVocê deseja jogar novamente?", "Acertos e erros", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-							//Invocar o método que pede novo sudoku
+							/* Atualizo a pontuação do cliente */
+							currentHits = currentHits + numberOfHits;
+							currentErrors = currentErrors + numberOfErrors;
+							if(currentId + 1 == 10) {
+								Object[] buttons = {"Ok"};
+								int result = JOptionPane.showOptionDialog(null, "Parabéns! Você zerou o Sudoku!\nVocê acertou no total: " + Integer.toString(currentHits) + "\nVocê errou no total: " + Integer.toString(currentErrors) + "\n", "Parabéns!", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, buttons, buttons[0]);
+								if(res == JOptionPane.OK_OPTION) {
+									System.exit(1);
+								}
+							} else {
+								//Pede o novo sudoku
+							}
 						} else {
 							System.exit(1);
 						}
