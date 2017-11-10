@@ -208,7 +208,7 @@ public class SudokuGUI {
 							if(currentId + 1 == 10) {
 								Object[] buttons = {"Ok"};
 								int result = JOptionPane.showOptionDialog(null, "Parabéns! Você zerou o Sudoku!\nVocê acertou no total: " + Integer.toString(currentHits) + "\nVocê errou no total: " + Integer.toString(currentErrors) + "\n", "Parabéns!", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, buttons, buttons[0]);
-								if(res == JOptionPane.OK_OPTION) {
+								if(result == JOptionPane.OK_OPTION) {
 									System.exit(1);
 								}
 							} else {
