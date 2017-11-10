@@ -169,8 +169,8 @@ public class SudokuGUI {
 			if(sudokuFinish(listOfFields, matrixUser, fillContent)) {
 				if (JOptionPane.showConfirmDialog(null, "Acabou! Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					try {
-						String stringHit = Integer.toString(s.countHit());
-						String stringError = Integer.toString(s.countError());
+						String stringHit = Integer.toString(s.numberOfHits());
+						String stringError = Integer.toString(s.numberOfErrors());
 						if (JOptionPane.showConfirmDialog(null, "Acertos: " + stringHit +"\nErros: " +  stringError + "\nVocê deseja jogar novamente?", "Acertos e erros", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 							//Invocar o método que pede novo sudoku
 						} else {

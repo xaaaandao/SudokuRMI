@@ -5,15 +5,15 @@ clean:
 	rm *.class
 
 compile:
-	javac Sudoku.java SudokuInterface.java Servidor.java
-	javac SudokuGUI.java Cliente.java
+	javac SudokuInterface.java Sudoku.java ManageSudoku.java Servidor.java
+	javac Fields.java SudokuGUI.java Cliente.java
 
 server:
-	javac Sudoku.java SudokuInterface.java Servidor.java
+	javac SudokuInterface.java Sudoku.java ManageSudoku.java Servidor.java
 	java -Djava.security.policy=policy.txt -Djava.rmi.server.codebase=file: Servidor
 
 client:
-	javac Fields.java SudokuUpdate.java SudokuGUI.java Cliente.java
+	javac Fields.java SudokuGUI.java Cliente.java
 	java -Djava.security.policy=policy.txt Cliente
 
 git:

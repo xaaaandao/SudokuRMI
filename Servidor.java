@@ -13,11 +13,11 @@ public class Servidor {
              }
 
              /* Inicializa um objeto remoto */
-             Sudoku sudoku = new Sudoku();
+             ManageSudoku manageSudoku = new ManageSudoku();
 
              /* Registra o objeto remoto no binder */
              Registry registry = LocateRegistry.getRegistry("localhost");
-	         registry.bind("JogoSudoku", sudoku);
+	         registry.bind("JogoSudoku", manageSudoku);
 
 	         /* Aguardando invocações remotas */
 	         System.out.println("Servidor pronto ...");
