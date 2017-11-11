@@ -36,53 +36,53 @@ public class ManageSudoku extends UnicastRemoteObject implements SudokuInterface
 		}
 	}
 	
-	public int [][]matrixForPlayer() throws RemoteException {
-    	return listOfSudoku.get(idSudoku).matrixPlayer;
+	public int [][]matrixForPlayer(int id) throws RemoteException {
+    	return listOfSudoku.get(id).matrixPlayer;
     }
     
 
-	public int [][]matrixFields() throws RemoteException {
-		return listOfSudoku.get(idSudoku).matrixFields;
+	public int [][]matrixFields(int id) throws RemoteException {
+		return listOfSudoku.get(id).matrixFields;
 	}
 	
-	public int currentId() throws RemoteException {
-		return idSudoku;
-	}
-
-	public void replaceValue(int value, int i, int j) throws RemoteException{
-    	listOfSudoku.get(idSudoku).matrixPlayer[i][j] = value;
+	public void replaceValue(int id, int value, int i, int j) throws RemoteException{
+    	listOfSudoku.get(id).matrixPlayer[i][j] = value;
     }
     
-	public int countFillFields() throws RemoteException{
+	public int countFillFields(int id) throws RemoteException{
 		Sudoku sudoku = new Sudoku();
-    	return sudoku.countFieldsEmpty(listOfSudoku.get(idSudoku).matrixPlayer);
+    	return sudoku.countFieldsEmpty(listOfSudoku.get(id).matrixPlayer);
     }
 	
-	public int numberOfHits() throws RemoteException{
+	public int numberOfHits(int id) throws RemoteException{
 		Sudoku sudoku = new Sudoku();
-    	return sudoku.countHits(listOfSudoku.get(idSudoku).matrixFields, listOfSudoku.get(idSudoku).matrixPlayer, listOfSudoku.get(idSudoku).matrixAnswers);
+    	return sudoku.countHits(listOfSudoku.get(id).matrixFields, listOfSudoku.get(id).matrixPlayer, listOfSudoku.get(id).matrixAnswers);
     }
 	
-	public int numberOfErrors() throws RemoteException{
+	public int numberOfErrors(int id) throws RemoteException{
 		Sudoku sudoku = new Sudoku();
-    	return sudoku.countErrors(listOfSudoku.get(idSudoku).matrixFields, listOfSudoku.get(idSudoku).matrixPlayer, listOfSudoku.get(idSudoku).matrixAnswers);
+    	return sudoku.countErrors(listOfSudoku.get(id).matrixFields, listOfSudoku.get(id).matrixPlayer, listOfSudoku.get(id).matrixAnswers);
     }
 	
-	public int checkInput(int value, int i, int j) throws RemoteException{
+	public int checkInput(int id, int value, int i, int j) throws RemoteException{
     	/* Verifico se a posição que o usuário está tentando inserir está vazia */
-    	if(listOfSudoku.get(idSudoku).matrixPlayer[i][j] == 0) {
+    	if(listOfSudoku.get(id).matrixPlayer[i][j] == 0) {
     		/* Insiro na matriz */
-    		listOfSudoku.get(idSudoku).matrixPlayer[i][j] = value;
+    		listOfSudoku.get(id).matrixPlayer[i][j] = value;
     		return 1;
     	/* Caso a posição já está preenchida */
     	} else {
     		/* Verifico se eu quero sobrescrever com o meu valor */
     		/* Se sim coloco o valor que o usuário quer e devolvo para todos os meus jogadores */
-    		if(listOfSudoku.get(idSudoku).matrixPlayer[i][j] == value){
+    		if(listOfSudoku.get(id).matrixPlayer[i][j] == value){
         		return 2;	
     		}
     		return 3;
     	}
 	}
+	
+	public int getOldValue(int id, int i, int j) throws RemoteException{
+		return listOfSudoku.get(id).matrixPlayer[i][j];
+	}	
 	
 }

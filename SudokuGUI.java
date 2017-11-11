@@ -34,7 +34,7 @@ public class SudokuGUI {
 	 * sobrescrever ou não o valor.
 	 * @return void.
 	 * */
-	public void checkResponseSudoku(SudokuInterface sudoku, int response, int value, Fields field) {
+	public void checkResponseSudoku(SudokuInterface sudoku, int level, int response, int value, Fields field) {
 		switch (response) {
 			case 1:
 				/* Valor adicionado com sucesso */
@@ -46,9 +46,17 @@ public class SudokuGUI {
 				/* Caso que o jogador esteja sobescrevendo seja diferente ao valor que já esteja lá */
 				if (JOptionPane.showConfirmDialog(null, "Você deseja sobrescrever o valor?", "Posição já preenchida", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					try {
-						sudoku.replaceValue(value, field.getI(), field.getJ());
+						sudoku.replaceValue(level, value, field.getI(), field.getJ());
 					} catch (RemoteException r) {
 						
+					}
+				} else {
+					try {
+						JTextField fieldOldValue = field.getJTextField();
+						String oldValue = Integer.toString(sudoku.getOldValue(level, field.getI(), field.getJ()));
+						fieldOldValue.setText(oldValue);
+					} catch (RemoteException r) {
+						System.out.println(r);
 					}
 				}
 				break;
@@ -82,28 +90,12 @@ public class SudokuGUI {
 		}
 	}
 	
-	public String levelForSudoku(SudokuInterface sudoku){
-		try {
-			int level = sudoku.currentId();
-			if(level >= 0 && level <= 2)
-				return "Jogue Sudoku (Nível Fácil)";
-			else if(level >= 3 && level <= 5)
-				return "Jogue Sudoku (Nível Médio)";
-			else if(level >= 7 && level <= 8)
-				return "Jogue Sudoku (Nível Díficil)";
-		} catch (RemoteException r) {
-			
-		}
-		return null;
-	}
-	
-	public int currentLevelForSudoku(SudokuInterface sudoku){
-		try {
-			return sudoku.currentId();
-		} catch (RemoteException r) {
-			
-		}
-		return -1;
+	public String levelForSudoku(int level){
+		if(level >= 0 && level <= 2)
+			return "Jogue Sudoku (Nível Fácil)";
+		else if(level >= 3 && level <= 5)
+			return "Jogue Sudoku (Nível Médio)";
+		return "Jogue Sudoku (Nível Díficil)";
 	}
 	
 	/**
@@ -117,11 +109,11 @@ public class SudokuGUI {
 	 * estão preenchidas novamente. 
 	 * @return void.
 	 * */
-	public void buildWindowSudoku(SudokuInterface sudoku, int [][]matrixFields, int[][] matrixUser) throws IOException{
+	public void buildWindowSudoku(SudokuInterface sudoku, int level, int [][]matrixFields, int[][] matrixUser) throws IOException{
 		List<Fields> listOfFields = new ArrayList<>();
 		int[][] matrixUpdate = new int[rows][columns];
 		
-		JFrame window = new JFrame(levelForSudoku(sudoku));
+		JFrame window = new JFrame(levelForSudoku(level));
 		JLabel[][] fixContent = new JLabel[rows][columns];
 		JTextField[][] fillContent = new JTextField[rows][columns];
 		JPanel panel = new JPanel();
@@ -140,8 +132,6 @@ public class SudokuGUI {
 		contactMenuItemListener(contactMenuItem);
 		loadListOfFields(listOfFields, matrixFields);
 		
-		int currentId = currentLevelForSudoku(sudoku);
-		
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
 				if(matrixFields[i][j] == 0) {
@@ -158,7 +148,7 @@ public class SudokuGUI {
 					checkValue(document);
 				    /* Fields pega a posição que o cliente está preenchendo */
 				    Fields field = new Fields(i, j, fillContent[i][j]);
-				    focusField(sudoku, fillContent[i][j], field);
+				    focusField(sudoku, level, fillContent[i][j], field);
 					panel.add(fillContent[i][j]);
 				} else {
 					fixContent[i][j] = new JLabel(Integer.toString(matrixFields[i][j]), SwingConstants.CENTER);
@@ -177,7 +167,7 @@ public class SudokuGUI {
 		while(true) {
 			//matrixUpdate = sudokuUpdate.getMatrix();
 			try {
-				matrixUpdate = sudoku.matrixForPlayer(); 
+				matrixUpdate = sudoku.matrixForPlayer(level); 
 			} catch (RemoteException r) {
 				
 			}
@@ -197,17 +187,18 @@ public class SudokuGUI {
 			if(sudokuFinish(listOfFields, matrixUser, fillContent)) {
 				if (JOptionPane.showConfirmDialog(null, "Acabou! Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					try {
-						int numberOfHits = s.numberOfHits();
-						int numberOfErrors = s.numberOfErrors();
+						int numberOfHits = s.numberOfHits(level);
+						int numberOfErrors = s.numberOfErrors(level);
 						String stringHit = Integer.toString(numberOfHits);
 						String stringError = Integer.toString(numberOfErrors);
 						if (JOptionPane.showConfirmDialog(null, "Acertos: " + stringHit +"\nErros: " +  stringError + "\nVocê deseja jogar novamente?", "Acertos e erros", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 							/* Atualizo a pontuação do cliente */
 							currentHits = currentHits + numberOfHits;
 							currentErrors = currentErrors + numberOfErrors;
-							if(currentId + 1 == 10) {
+							if(level + 1 == 10) {
 								Object[] buttons = {"Ok"};
 								int result = JOptionPane.showOptionDialog(null, "Parabéns! Você zerou o Sudoku!\nVocê acertou no total: " + Integer.toString(currentHits) + "\nVocê errou no total: " + Integer.toString(currentErrors) + "\n", "Parabéns!", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, buttons, buttons[0]);
+								//Perguntar se quer salvar sua pontuação
 								if(result == JOptionPane.OK_OPTION) {
 									System.exit(1);
 								}
@@ -339,7 +330,7 @@ public class SudokuGUI {
 	 * para o servidor processar e pega a resposta do servidor e interpreta ela.
 	 * @return void.
 	 * */
-	public void focusField(SudokuInterface sudoku, JTextField field, Fields position) {
+	public void focusField(SudokuInterface sudoku, int level, JTextField field, Fields position) {
 	    field.addFocusListener(new java.awt.event.FocusAdapter() {
 			public void focusLost(java.awt.event.FocusEvent e) {
 				JTextField input = (JTextField) e.getSource();
@@ -351,8 +342,8 @@ public class SudokuGUI {
 						} else {
 							value = Integer.parseInt(input.getText());
 						}
-						int responseServer = sudoku.checkInput(value, position.getI(), position.getJ());
-						checkResponseSudoku(sudoku, responseServer, value, position);
+						int responseServer = sudoku.checkInput(level, value, position.getI(), position.getJ());
+						checkResponseSudoku(sudoku, level, responseServer, value, position);
 					} catch (RemoteException re){
 						
 					}

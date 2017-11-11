@@ -20,7 +20,9 @@ public class Cliente {
 
             /* Monta a interface gráfica a partir dos sudokus recebidos do servidor */
             SudokuGUI sudokuGUI = new SudokuGUI(sudoku);
-            sudokuGUI.buildWindowSudoku(sudoku, sudoku.matrixFields(), sudoku.matrixForPlayer());
+            /* 0 refere que eu quero o primeiro sudoku da lista presente na lista do servidor */
+            int level = 0;
+            sudokuGUI.buildWindowSudoku(sudoku, level, sudoku.matrixFields(level), sudoku.matrixForPlayer(level));
             
     	} catch (RemoteException r) {
         
