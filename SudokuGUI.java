@@ -191,11 +191,11 @@ public class SudokuGUI {
 						int numberOfErrors = s.numberOfErrors(level);
 						String stringHit = Integer.toString(numberOfHits);
 						String stringError = Integer.toString(numberOfErrors);
-						if (JOptionPane.showConfirmDialog(null, "Acertos: " + stringHit +"\nErros: " +  stringError + "\nVocê deseja jogar novamente?", "Acertos e erros", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						if (JOptionPane.showConfirmDialog(null, "Acertos: " + stringHit +"\nErros: " +  stringError + "\nVocê deseja ir para o próximo nível?", "Acertos e erros", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 							/* Atualizo a pontuação do cliente */
 							currentHits = currentHits + numberOfHits;
 							currentErrors = currentErrors + numberOfErrors;
-							if(level + 1 == 10) {
+							if(level + 1 == 9) {
 								Object[] buttons = {"Ok"};
 								int result = JOptionPane.showOptionDialog(null, "Parabéns! Você zerou o Sudoku!\nVocê acertou no total: " + Integer.toString(currentHits) + "\nVocê errou no total: " + Integer.toString(currentErrors) + "\n", "Parabéns!", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, buttons, buttons[0]);
 								//Perguntar se quer salvar sua pontuação
@@ -204,6 +204,13 @@ public class SudokuGUI {
 								}
 							} else {
 								//Pede o novo sudoku
+								window.dispose();
+								level++;
+								try {
+									buildWindowSudoku(sudoku, level, sudoku.matrixFields(level), sudoku.matrixForPlayer(level));	
+								} catch (RemoteException r) {
+									
+								}
 							}
 						} else {
 							System.exit(1);
