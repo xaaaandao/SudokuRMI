@@ -129,17 +129,20 @@ public class SudokuGUI{
 		JMenu helpMenuItem = new JMenu("Ajuda");
 		JMenuItem rankMenuItem = new JMenuItem("Ranking");
 		JMenuItem exitMenuItem = new JMenuItem("Sair");
+		JMenuItem howToPlayMenuItem = new JMenuItem("Como jogar");
 		JMenuItem contactMenuItem = new JMenuItem("Entre em contato");
 
 		otherWindow = false;
 		panel.setLayout(new GridLayout(rows, columns));
 		optionsMenuItem.add(rankMenuItem);
 		optionsMenuItem.add(exitMenuItem);
+		helpMenuItem.add(howToPlayMenuItem);
 		helpMenuItem.add(contactMenuItem);
 		menuBar.add(optionsMenuItem);
 		menuBar.add(helpMenuItem);
 		rankMenuItemListener(sudoku, rankMenuItem);
 		exitMenuItemListener(exitMenuItem);
+		howToPlayMenuItemListener(howToPlayMenuItem);
 		contactMenuItemListener(contactMenuItem);
 		loadListOfFields(listOfFields, matrixFields);
 		
@@ -406,6 +409,43 @@ public class SudokuGUI{
 			}
 		}
 		return true;
+	}
+
+	public void howToPlayMenuItemListener(JMenuItem howToPlayMenuItem){
+		howToPlayMenuItem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent ev) {
+		    	otherWindow = true;
+		    	String[] options = {"Ok"};
+		    	String message = "<html>1.Como jogar o sudoku?<br/>"
+		    					+ "R:Existem 81 valores com algumas posições preenchidas e algums que devem ser preenchidas.<br/><br/>"
+		    					+ "2.Quais valores devo utilizar?<br/>"
+		    					+ "R:Os valores que devem ser preenchidos são de somente valores de 1 a 9.<br/><br/>"
+		    					+ "3.Preenchi com o valor posso alterar ou remover?<br/>"
+		    					+ "R:Sim, o valor que foi preenchido por você ou por outro jogador pode ser alterado ou removido,<br/>é somente confirmar a sua operação.<br/><br/>"
+		    					+ "4.Posso jogar com mais pessoas?<br/>"
+		    					+ "R:Sim, esse jogo pode ser jogado com quantas pessoas você quiser jogar! Para isso basta,<br/>"
+		    					+ "com que pessoas executem um novo jogo. Quando as pessoas estiverem em um mesmo níveis,<br/>"
+		    					+ "uns auxiliaram aos outros com os valores que acreditam estar corretos.<br/>"
+		    					+ "5.Existem níveis ou graus de dificuldades?<br/>"
+		    					+ "R:Sim, existem o nove níveis. O que varia entre elas é a quantidade de posições que devem ser preenchidas.<br/><br/>"
+		    					+ "6.Como posso visualizar o ranking de pontuação?<br/>"
+		    					+ "R:É só abrir na barra de menu o opções, e selecionar a opção de Ranking.<br/><br/>"
+		    					+ "7.Como posso ter nome no ranking?<br/>"
+		    					+ "R:Você deve jogar os nove níveis para ter seu nome e a sua pontuação no ranking.<br/><br/>"
+		    					+ "8.Como visualizar o número de acertos e erros?<br/>"
+		    					+ "R:Quando o seu sudoku em qualquer um dos níveis estiver preenchido, será identificado e você pode clicar em sim <br/>"
+		    					+ "na janela que irá aparecer para visualizar os acertos e erros. Caso você queira modificar algum valor, é só clicar<br/>"
+		    					+ "em não, se em dez segundos o sudoku continuar preenchido irá ser perguntado novamente, se for removido não irá ser<br/>"
+		    					+ "pergutado novamente, até que novamente esteja preenchido.</html>";
+				JLabel labelName = new JLabel(message);
+				JPanel panel = new JPanel();
+				panel.add(labelName);
+				int result = JOptionPane.showOptionDialog(null, panel, "Como jogar?", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+				if(result == 0) {
+					otherWindow = false;	
+				}
+		    }
+		});
 	}
 	
 	/**
