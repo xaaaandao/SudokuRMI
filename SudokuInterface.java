@@ -10,4 +10,6 @@ public interface SudokuInterface extends Remote {
 	public int numberOfErrors(int id) throws RemoteException;
 	public int checkInput(int id, int value, int i, int j) throws RemoteException;
 	public int getOldValue(int id, int i, int j) throws RemoteException;
+	public void addNewRecord(Players player) throws RemoteException;
+	public List<Players> getListOfPlayers() throws RemoteException;
 }

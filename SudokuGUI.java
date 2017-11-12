@@ -9,9 +9,10 @@ import javafx.stage.*;
 import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Timer;
 
-public class SudokuGUI {
+public class SudokuGUI{
 	
 	int rows = 9;
 	int columns = 9;
@@ -120,14 +121,17 @@ public class SudokuGUI {
 		JMenuBar menuBar = new JMenuBar();
 		JMenu optionsMenuItem = new JMenu("Opções");
 		JMenu helpMenuItem = new JMenu("Ajuda");
+		JMenuItem rankMenuItem = new JMenuItem("Ranking");
 		JMenuItem exitMenuItem = new JMenuItem("Sair");
 		JMenuItem contactMenuItem = new JMenuItem("Entre em contato");
 
 		panel.setLayout(new GridLayout(rows, columns));
+		optionsMenuItem.add(rankMenuItem);
 		optionsMenuItem.add(exitMenuItem);
 		helpMenuItem.add(contactMenuItem);
 		menuBar.add(optionsMenuItem);
 		menuBar.add(helpMenuItem);
+		rankMenuItemListener(sudoku, rankMenuItem);
 		exitMenuItemListener(exitMenuItem);
 		contactMenuItemListener(contactMenuItem);
 		loadListOfFields(listOfFields, matrixFields);
@@ -161,6 +165,7 @@ public class SudokuGUI {
 		window.add(panel, BorderLayout.CENTER);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setSize(600, 600);
+		window.setResizable(false);
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
 		
@@ -196,12 +201,10 @@ public class SudokuGUI {
 							currentHits = currentHits + numberOfHits;
 							currentErrors = currentErrors + numberOfErrors;
 							if(level + 1 == 9) {
-								Object[] buttons = {"Ok"};
-								int result = JOptionPane.showOptionDialog(null, "Parabéns! Você zerou o Sudoku!\nVocê acertou no total: " + Integer.toString(currentHits) + "\nVocê errou no total: " + Integer.toString(currentErrors) + "\n", "Parabéns!", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, buttons, buttons[0]);
-								//Perguntar se quer salvar sua pontuação
-								if(result == JOptionPane.OK_OPTION) {
-									System.exit(1);
+								if (JOptionPane.showConfirmDialog(null, "Parabéns! Você zerou o Sudoku!\nVocê acertou no total: " + Integer.toString(currentHits) + "\nVocê errou no total: " + Integer.toString(currentErrors) + "\nVocê deseja salvar seu nome no ranking?", "Parabéns!", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+									addNameRanking(sudoku, currentHits);
 								}
+								System.exit(1);	
 							} else {
 								//Pede o novo sudoku
 								window.dispose();
@@ -236,6 +239,29 @@ public class SudokuGUI {
 			Thread.sleep(time);	
 		} catch (InterruptedException i) {
 			
+		}
+	}
+	
+	public void addNameRanking(SudokuInterface sudoku, int score){
+		String[] options = {"Ok"};
+		JLabel labelName = new JLabel("Nome: ");
+		JTextField fieldName = new JTextField(15);
+		JPanel panel = new JPanel();
+		panel.add(labelName);
+		panel.add(fieldName);
+		while(true) {
+			int result = JOptionPane.showOptionDialog(null, panel, "Entrando no ranking", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+			if(result == 0 && fieldName.getText().length() > 0) {
+				Players player = new Players();
+				player.setName(fieldName.getText());
+				player.setScore(score);
+				try {
+					sudoku.addNewRecord(player);
+				} catch (RemoteException re) {
+
+				}
+				break;
+			}
 		}
 	}
 	
@@ -374,7 +400,7 @@ public class SudokuGUI {
 		}
 		return true;
 	}
-
+	
 	/**
 	 * O método contactMenuItemListener(JMenuItem contactMenuItem), verifica
 	 * se o cursor foi clicado no campo que foi passado por parâmetro,
@@ -385,7 +411,6 @@ public class SudokuGUI {
 		contactMenuItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent ev) {
 		    	JOptionPane.showMessageDialog (null, "Problemas, dúvida e sugestões?\nEntre em contato conosco pelo e-mail: alexandre.ykz@gmail.com", "Entre em contato conosco", JOptionPane.INFORMATION_MESSAGE);
-
 		    }
 		});
 	}
@@ -400,6 +425,38 @@ public class SudokuGUI {
 		exitMenuItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent ev) {
 		            System.exit(1);
+		    }
+		});
+
+	}
+	
+	public void showRanking(List<Players> listOfPlayers) {
+		int numberOfColumns = 2;
+		if(listOfPlayers.size() == 0) {
+	    	JOptionPane.showMessageDialog (null, "Sem ninguém no ranking!!!", "Ranking vazio!", JOptionPane.ERROR_MESSAGE);
+		} else {
+			Object[][] valueTable = new Object[listOfPlayers.size()][numberOfColumns];
+			for(int i = 0; i < listOfPlayers.size(); i++) {
+				valueTable[i][0] = listOfPlayers.get(i).getName();
+				valueTable[i][1] = Integer.toString(listOfPlayers.get(i).getScore());
+			}
+			Object[] nameColumns = {"Nome", "Pontuação"};
+			JTable ranking = new JTable(valueTable, nameColumns);
+			ranking.setDefaultEditor(Object.class, null);
+			JOptionPane.showMessageDialog(null, new JScrollPane(ranking), "Nosso ranking", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	public void rankMenuItemListener(SudokuInterface sudoku, JMenuItem rankMenuItem){
+		rankMenuItem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent ev) {
+		    	try {
+		    		List<Players> listOfPlayers = sudoku.getListOfPlayers();
+		    		showRanking(listOfPlayers);
+		    	} catch (RemoteException r) {
+		    		
+		    	}
+		            //System.exit(1);
 		    }
 		});
 
