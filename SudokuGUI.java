@@ -14,6 +14,7 @@ import java.util.Timer;
 
 public class SudokuGUI{
 	
+	boolean otherWindow;
 	int rows = 9;
 	int columns = 9;
 	static int currentHits = 0;
@@ -125,6 +126,7 @@ public class SudokuGUI{
 		JMenuItem exitMenuItem = new JMenuItem("Sair");
 		JMenuItem contactMenuItem = new JMenuItem("Entre em contato");
 
+		otherWindow = false;
 		panel.setLayout(new GridLayout(rows, columns));
 		optionsMenuItem.add(rankMenuItem);
 		optionsMenuItem.add(exitMenuItem);
@@ -189,7 +191,7 @@ public class SudokuGUI{
 					}
 				} 
 			}
-			if(sudokuFinish(listOfFields, matrixUser, fillContent)) {
+			if(sudokuFinish(listOfFields, matrixUser, fillContent) && otherWindow == false) {
 				if (JOptionPane.showConfirmDialog(null, "Acabou! Você deseja ver a quantidade de acertos e erros?", "Todas as posições preenchidas", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					try {
 						int numberOfHits = s.numberOfHits(level);
@@ -410,7 +412,15 @@ public class SudokuGUI{
 	public void contactMenuItemListener(JMenuItem contactMenuItem){
 		contactMenuItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent ev) {
-		    	JOptionPane.showMessageDialog (null, "Problemas, dúvida e sugestões?\nEntre em contato conosco pelo e-mail: alexandre.ykz@gmail.com", "Entre em contato conosco", JOptionPane.INFORMATION_MESSAGE);
+		    	otherWindow = true;
+		    	String[] options = {"Ok"};
+				JLabel labelName = new JLabel("<html>Problemas, dúvida e sugestões<br/>Entre em contato conosco pelo e-mail: alexandre.ykz@gmail.com</html>");
+				JPanel panel = new JPanel();
+				panel.add(labelName);
+				int result = JOptionPane.showOptionDialog(null, panel, "Entre em contato conosco", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+				if(result == 0) {
+					otherWindow = false;	
+				}
 		    }
 		});
 	}
