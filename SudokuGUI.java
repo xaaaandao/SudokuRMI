@@ -442,8 +442,14 @@ public class SudokuGUI{
 	
 	public void showRanking(List<Players> listOfPlayers) {
 		int numberOfColumns = 2;
+		otherWindow = true;
+		String[] options = {"Ok"};
+		int result;
 		if(listOfPlayers.size() == 0) {
-	    	JOptionPane.showMessageDialog (null, "Sem ninguém no ranking!!!", "Ranking vazio!", JOptionPane.ERROR_MESSAGE);
+			JLabel labelName = new JLabel("<html>Nenhum jogador jogou ainda!<br/>Jogue e tenha seu nome aqui! Boa sorte!</html>");
+			JPanel panel = new JPanel();
+			panel.add(labelName);
+			result = JOptionPane.showOptionDialog(null, panel, "Ranking vazio!", JOptionPane.NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options , options[0]);
 		} else {
 			Object[][] valueTable = new Object[listOfPlayers.size()][numberOfColumns];
 			for(int i = 0; i < listOfPlayers.size(); i++) {
@@ -453,7 +459,10 @@ public class SudokuGUI{
 			Object[] nameColumns = {"Nome", "Pontuação"};
 			JTable ranking = new JTable(valueTable, nameColumns);
 			ranking.setDefaultEditor(Object.class, null);
-			JOptionPane.showMessageDialog(null, new JScrollPane(ranking), "Nosso ranking", JOptionPane.INFORMATION_MESSAGE);
+			result = JOptionPane.showOptionDialog(null, new JScrollPane(ranking), "O nosso ranking", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+		}
+		if(result == 0) {
+			otherWindow = false;
 		}
 	}
 
@@ -466,7 +475,6 @@ public class SudokuGUI{
 		    	} catch (RemoteException r) {
 		    		
 		    	}
-		            //System.exit(1);
 		    }
 		});
 
