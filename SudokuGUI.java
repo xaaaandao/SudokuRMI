@@ -93,11 +93,12 @@ public class SudokuGUI{
 	}
 	
 	public String levelForSudoku(int level){
-		if(level >= 0 && level <= 2)
+		/*if(level >= 0 && level <= 2)
 			return "Jogue Sudoku (Nível Fácil)";
 		else if(level >= 3 && level <= 5)
 			return "Jogue Sudoku (Nível Médio)";
-		return "Jogue Sudoku (Nível Díficil)";
+		return "Jogue Sudoku (Nível Díficil)";*/
+		return "Jogue Sudoku (Nível " +  Integer.toString(level + 1)+")";
 	}
 	
 	/**
