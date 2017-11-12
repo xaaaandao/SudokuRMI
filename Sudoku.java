@@ -2,8 +2,6 @@ import java.rmi.*;
 import java.rmi.server.*;
 import java.util.*;
 
-import com.sun.glass.ui.Robot;
-
 public class Sudoku{
 
 	int [][]matrixAnswers;
@@ -192,6 +190,13 @@ public class Sudoku{
     	return error;
     }
 
+	/**
+	 * O método transposedOrNo(), gera um valor aleatório dentre o intervalo de 0 e 1.
+	 * Se o valor for um significa que o sudoku que deve ser preenchida pelo jogador
+	 * deve ser transposta, caso for zero ela não deve ser transposta
+	 * @return é um inteiro caso for um deve ser transformada em um arranjo bidimensional transposta
+	 * caso for zero não faz nada.
+	 * */
 	public boolean transposedOrNo() {
 		int randomNumber = new Random().nextInt((2 - 0) + 0) + 0;
         if(randomNumber == 1)
@@ -199,6 +204,13 @@ public class Sudoku{
         return false;
 	}
 	
+	/**
+	 * O método tranposedMatrix(int [][] matrix), pega o arranjo bidimensional de inteiros e realiza
+	 * a transposta desse desse arranjo. Após isso, atualiza esse arranjo que foi passado por parâmetro 
+	 * com ele sendo a transposta.
+	 * @param matrix é um arranjo bidimensional de inteiros que será aplicado a transposta. 
+	 * @return void.
+	 * */
     public void tranposedMatrix(int [][] matrix){
         int[][] newMatrix  = new int[9][9];
         for(int i = 0; i < rows; i++){
