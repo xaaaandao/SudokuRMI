@@ -81,10 +81,22 @@ public class ManageSudoku extends UnicastRemoteObject implements SudokuInterface
 		}
 	}
 	
+	/**
+	 * O método matrixForAnswers(int id) que pode ser invocado remotamente, retorna o sudoku
+	 * que está com todas as respostas de todos os sudokus a partir de um identificador.
+	 * @param id é um inteiro com o identificador do sudoku solicitado pelo servidor.
+	 * @return matrixAnswers arranjo bidimensional de inteiros com as respostas.
+	 * */
 	public int [][]matrixForAnswers(int id) throws RemoteException {
     	return listOfSudoku.get(id).matrixAnswers;
     }
 
+	/**
+	 * O método resetMatrixForPlayer(int id) que pode ser invocado remotamente, tira 
+	 * os valores preenhchidos no sudoku pelo jogador. 
+	 * @param id é um inteiro com o identificador do sudoku solicitado pelo servidor.
+	 * @return void.
+	 * */
 	public void resetMatrixForPlayer(int id) throws RemoteException {
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
@@ -95,6 +107,11 @@ public class ManageSudoku extends UnicastRemoteObject implements SudokuInterface
 		}
     }
 	
+	/**
+	 * O método resetRanking() que pode ser invocado remotamente, apaga todos os 
+	 * jogadores presentes na lista de jogadores e atualiza o arquivo de banco de dados.
+	 * @return void.
+	 * */
 	public void resetRanking() throws RemoteException  {
 		listOfPlayers = new ArrayList<>();
 		refreshDb();

@@ -7,14 +7,26 @@ public class Command {
 	int columns = 9;
 	int numberOfSudoku = 9;
 
-	public void clearScreen() {  
+	/**
+	 * O método clearScreen(), simplesmente dá um clear no terminal.
+	 * @return void.
+	 * */
+	public void clearScreen(){  
 	    System.out.print("\033[H\033[2J");  
 	    System.out.flush();  
 	}  
 
-	public String processCommandPlayer(ManageSudoku manageSudoku, String command){
+	/**
+	 * O método processCommandPlayer(ManageSudoku manageSudoku, String command), verifica
+	 * qual parâmetro que foi recebido pelo comando, em que pode ser para exibir 
+	 * todas os sudokus preenchidos pelos jogadores ou um sudoku específico.
+	 * @param manageSudoku é um objeto do tipo ManageSudoku que permite invoca o sudoku.
+	 * @param parameter é uma String com o parâmetro que foi solicitado pelo servidor.
+	 * @return answers que é uma String com o que foi gerado pelo comando solicitado.
+	 * */
+	public String processCommandPlayer(ManageSudoku manageSudoku, String parameter){
 		String answers = "";
-		switch(command) {
+		switch(parameter) {
 			case "-t":
 				try {
 					for(int i = 0; i < numberOfSudoku; i++) {
@@ -92,7 +104,13 @@ public class Command {
 		}
 	}
 
-	
+	/**
+	 * O método matrixToString(int id, int [][]matrix), simplesmente exibe o sudoku que 
+	 * foi solicitado como parâmetro e exibe o nível na qual ela pertence.
+	 * @param id é um inteiro com identificador do sudoku solicitado.
+	 * @param matrix é um arranjo bidimensional de inteiros com os valores que serão impresso.
+	 * @return print é uma String com os valores da matriz no formato de String.
+	 * */
 	public String matrixToString(int id, int [][]matrix) {
 		String print = "╔══════════════════╗\n";
 		print = print +"║     Nível "+ id  +"      ║\n";
@@ -111,7 +129,14 @@ public class Command {
 		return print;
 	}
 	
-	
+	/**
+	 * O método processCommandAnswers(ManageSudoku manageSudoku, String command), verifica
+	 * qual parâmetro que foi recebido pelo comando, em que pode ser para verificar as respostas
+	 * de todos os sudokus preenchidos pelos jogadores ou um sudoku específico.
+	 * @param manageSudoku é um objeto do tipo ManageSudoku que permite invoca o sudoku.
+	 * @param parameter é uma String com o parâmetro que foi solicitado pelo servidor.
+	 * @return answers que é uma String com o que foi gerado pelo comando solicitado.
+	 * */
 	public String processCommandAnswers(ManageSudoku manageSudoku, String command){
 		String answers = "";
 		switch(command) {
@@ -191,7 +216,15 @@ public class Command {
 				return "faltou algum parâmetro pesquise digitando ajuda";
 		}
 	}
-	
+
+	/**
+	 * O método processCommandAnswers(ManageSudoku manageSudoku, String command), verifica
+	 * qual parâmetro que foi recebido pelo comando, em que pode ser para remover 
+	 * todas os valores do Sudoku preenchidos pelos jogadores ou um sudoku específico.
+	 * @param manageSudoku é um objeto do tipo ManageSudoku que permite invoca o sudoku.
+	 * @param parameter é uma String com o parâmetro que foi solicitado pelo servidor.
+	 * @return String com qual sudoku teve seus valores removidos.
+	 * */
 	public String processCommandReset(ManageSudoku manageSudoku, String command){
 		switch(command) {
 			case "-s":
@@ -278,6 +311,11 @@ public class Command {
 		}
 	}
 	
+	/**
+	 * O método printRanking(List<Players> listOfPlayers), imprime a lista de jogadores em uma String.
+	 * @param listOfPlayers é uma lista do tipo Players que possui informação de todos os jogadores.
+	 * @return ranking String com todos os jogadores do ranking.
+	 * */
 	public String printRanking(List<Players> listOfPlayers){
 		if(listOfPlayers.size() == 0){
 			return "Ranking vazio!\n";
@@ -289,6 +327,13 @@ public class Command {
 		return ranking;
 	}
 	
+	/**
+	 * O método processCommand(ManageSudoku manageSudoku, String command), processa o comando 
+	 * que foi enviado pelo servidor. 
+	 * @param manageSudoku é um objeto do tipo ManageSudoku que permite invoca o sudoku.
+	 * @param command é uma String com o comando enviado pelo servidor.
+	 * @return String com o rsultado do comando pedido.
+	 * */
 	public String processCommand(ManageSudoku manageSudoku, String command){
 		command = command.toLowerCase();
 		String []request = command.split(" ");

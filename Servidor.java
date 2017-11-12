@@ -25,6 +25,7 @@ public class Servidor {
         	 command.clearScreen();
 	         System.out.println("Servidor pronto ...");
 	         
+	         /* Executa comandos no servidor */
         	 Scanner scanner = new Scanner(System.in);
         	 String commandToExecute = "";
     		 while(!commandToExecute.equalsIgnoreCase("sair")){
