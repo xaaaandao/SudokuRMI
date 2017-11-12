@@ -3,6 +3,14 @@ import java.rmi.*;
 import java.rmi.server.*;
 import java.util.*;
 
+/**
+ * Descrição: é uma classe que gerencia os sudokus em uma lista, as listas de jogadores 
+ * e também aqui estão a implementação dos métodos que podem ser invocado remotamente pelo cliente.
+ * Autor: Alexandre Yuji Kajihara
+ * Data de criação: 12/11/2017
+ * Data de atualização: 12/11/2017
+ * */
+
 public class ManageSudoku extends UnicastRemoteObject implements SudokuInterface, Serializable{
 	
 	List<Sudoku> listOfSudoku;

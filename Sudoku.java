@@ -2,6 +2,15 @@ import java.rmi.*;
 import java.rmi.server.*;
 import java.util.*;
 
+/**
+ * Descrição: é uma classe relacionado ao sudoku, em que todos os sudokus são gerado aleatoriamente.
+ * Além disso, tem operações relacionadas ao sudoku, como copiar, imprimir, preencher, quais posições que irão
+ * ser preenchidas pelo jogador, quantos valores estão corretos e quantos estão errados.
+ * Autor: Alexandre Yuji Kajihara
+ * Data de criação: 12/11/2017
+ * Data de atualização: 12/11/2017
+ * */
+
 public class Sudoku{
 
 	int [][]matrixAnswers;

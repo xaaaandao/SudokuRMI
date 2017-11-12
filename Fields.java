@@ -2,6 +2,14 @@ import java.util.*;
 
 import javax.swing.JTextField;
 
+/**
+ * Descrição: é uma classe que armazena as posições na matriz de um determinado JTextField, e utilizado para saber qual posição foi
+ * preenchida pelo jogador.
+ * Autor: Alexandre Yuji Kajihara e Rafael Alessandro Ramos
+ * Data de criação: 02/11/2017
+ * Data de atualização: 12/11/2017
+ * */
+
 public class Fields{
 
 	private int i;

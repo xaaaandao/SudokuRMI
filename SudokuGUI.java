@@ -12,6 +12,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Timer;
 
+/**
+ * Descrição: a partir das matrizes que foram enviadas pelo servidor, gera a interface gráfica a partir dessas matrizes,
+ * além do que interpreta as respostas que foram dadas pelos servidor, se o valor foi adicionado corretamente, se todas as posições
+ * já foram preenchidas, se está tentando sobrescrever os valores, comparamos as matrizes para verificar se existem diferenças da matriz que
+ * está sendo exibida dá que sendo preenchida pelos jogadores no servidor, temos uma parte onde ensinamos como jogar, tem o ranking
+ * de jogadores com as melhores pontuações e também métodos relacionados a interface, como as ações e as  
+ * entradas permitidas.
+ * Autor: Alexandre Yuji Kajihara e Rafael Alessandro Ramos.
+ * Data de criação: 02/11/2017
+ * Data de atualização: 12/11/2017
+ * */
+
+
 public class SudokuGUI{
 	
 	boolean otherWindow;

@@ -1,6 +1,14 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * Descrição: é uma classe que armazena informações dos jogadores, como o nome
+ * e a pontuação do jogador.
+ * Autor: Alexandre Yuji Kajihara
+ * Data de criação: 12/11/2017
+ * Data de atualização: 12/11/2017
+ * */
+
 public class Players implements Serializable{
 
 	private String name;

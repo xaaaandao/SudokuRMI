@@ -1,6 +1,14 @@
 import java.rmi.registry.*;
 import java.util.Scanner;
 
+/**
+ * Descrição: o servidor instância a classe Sudoku(), registra um objeto remoto no binder e aguarda
+ * as invocações remotas. Além disso, ele tem alguns comandos que podem auxiliar a gerenciar o sudoku.
+ * Autor: Alexandre Yuji Kajihara
+ * Data de criação: 02/11/2017
+ * Data de atualização: 12/11/2017
+ * */
+
 public class Servidor {
 	
 	/**

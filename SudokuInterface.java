@@ -1,6 +1,13 @@
 import java.rmi.*;
 import java.util.*;
 
+/**
+ * Descrição: especificando os métodos que podem ser invocados remotamente pelo cliente.
+ * Autor: Alexandre Yuji Kajihara e Rafael Alessandro Ramos.
+ * Data de criação: 02/11/2017
+ * Data de atualização: 12/11/2017
+ * */
+
 public interface SudokuInterface extends Remote {
 	public int [][]matrixForAnswers(int id) throws RemoteException;
 	public void resetMatrixForPlayer(int id) throws RemoteException;

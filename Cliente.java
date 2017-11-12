@@ -1,6 +1,14 @@
 import java.rmi.*;
 import java.rmi.registry.*;
 
+/**
+ * Descrição: o cliente obtêm a referência remota, solicita duas matrizes uma que contém os campos,
+ * e uma matriz que é preenchida pelo usuário, a partir delas ele gera a interface gráfica.
+ * Autor: Alexandre Yuji Kajihara
+ * Data de criação: 02/11/2017
+ * Data de atualização: 12/11/2017
+ * */
+
 public class Cliente {
 	
 	/**

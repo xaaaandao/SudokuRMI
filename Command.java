@@ -1,6 +1,14 @@
 import java.rmi.RemoteException;
 import java.util.*;
 
+/**
+ * Descrição: é uma classe que processa os comandos que foram dados pelo servidor, e 
+ * sempre retornando os valores solicitados por ele. 
+ * Autor: Alexandre Yuji Kajihara
+ * Data de criação: 12/11/2017
+ * Data de atualização: 12/11/2017
+ * */
+
 public class Command {
 
 	int rows = 9;
