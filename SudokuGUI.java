@@ -122,7 +122,7 @@ public class SudokuGUI{
 		menuBar.add(optionsMenuItem);
 		menuBar.add(helpMenuItem);
 		rankMenuItemListener(sudoku, rankMenuItem);
-		exitMenuItemListener(sudoku, currentHits, exitMenuItem);
+		exitMenuItemListener(sudoku, currentHits, window, exitMenuItem);
 		howToPlayMenuItemListener(howToPlayMenuItem);
 		contactMenuItemListener(contactMenuItem);
 		loadListOfFields(listOfFields, matrixFields);
@@ -193,9 +193,10 @@ public class SudokuGUI{
 							if(level + 1 == 9) {
 								if (JOptionPane.showConfirmDialog(null, "Parabéns! Você zerou o Sudoku!\nVocê acertou no total: " + Integer.toString(currentHits) + "\nVocê errou no total: " + Integer.toString(currentErrors) + "\nVocê deseja salvar seu nome no ranking?", "Parabéns!", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 									if(currentHits > 0) {
-										addNameRanking(sudoku, currentHits);	
+										addNameRanking(sudoku, window, currentHits);	
 									}
 								}
+								window.dispose();
 								System.exit(1);	
 							} else {
 								/* Pede o novo sudoku */
@@ -209,8 +210,9 @@ public class SudokuGUI{
 							}
 						} else {
 							if(currentHits > 0) {
-								addNameRanking(sudoku, currentHits);	
+								addNameRanking(sudoku, window, currentHits);	
 							}
+							window.dispose();
 							System.exit(1);
 						}
 					} catch (RemoteException re){
@@ -249,7 +251,7 @@ public class SudokuGUI{
 	 * @param score é um inteiro com a pontuação obtida pelo jogador.
 	 * @return void.
 	 * */
-	public void addNameRanking(SudokuInterface sudoku, int score){
+	public void addNameRanking(SudokuInterface sudoku, JFrame window, int score){
 		String[] options = {"Ok"};
 		JLabel labelName = new JLabel("Nome: ");
 		JTextField fieldName = new JTextField(15);
@@ -270,6 +272,8 @@ public class SudokuGUI{
 				break;
 			}
 		}
+		window.dispose();
+		System.exit(1);
 	}
 	
 	/**
@@ -502,12 +506,13 @@ public class SudokuGUI{
 	 * @param exitMenuItem é um JMenuItem que será verificado se o mesmo for clicado ou não.
 	 * @return void.
 	 * */
-	public void exitMenuItemListener(SudokuInterface sudoku, int score, JMenuItem exitMenuItem){
+	public void exitMenuItemListener(SudokuInterface sudoku, int score, JFrame window, JMenuItem exitMenuItem){
 		exitMenuItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent ev) {
 		    		if(score > 0) {
-			    		addNameRanking(sudoku, score);
+			    		addNameRanking(sudoku, window, score);
 		    		}
+		    		window.dispose();
 		            System.exit(1);
 		    }
 		});

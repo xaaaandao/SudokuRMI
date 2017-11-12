@@ -7,6 +7,8 @@ public class ManageSudoku extends UnicastRemoteObject implements SudokuInterface
 	
 	List<Sudoku> listOfSudoku;
 	List<Players> listOfPlayers;
+	int rows = 9;
+	int columns = 9;
 	
 	/**
 	 * O construtor ManageSudoku(), que instância uma lista de sudoku e lista de jogadores
@@ -77,6 +79,25 @@ public class ManageSudoku extends UnicastRemoteObject implements SudokuInterface
 			}
 			listOfSudoku.add(sudoku);
 		}
+	}
+	
+	public int [][]matrixForAnswers(int id) throws RemoteException {
+    	return listOfSudoku.get(id).matrixAnswers;
+    }
+
+	public void resetMatrixForPlayer(int id) throws RemoteException {
+		for(int i = 0; i < rows; i++) {
+			for(int j = 0; j < columns; j++) {
+				if(listOfSudoku.get(id).matrixFields[i][j] == 0) {
+					listOfSudoku.get(id).matrixPlayer[i][j] = 0;
+				}
+			}
+		}
+    }
+	
+	public void resetRanking() throws RemoteException  {
+		listOfPlayers = new ArrayList<>();
+		refreshDb();
 	}
 	
 	/**
@@ -225,7 +246,7 @@ public class ManageSudoku extends UnicastRemoteObject implements SudokuInterface
 		}
 		/* Se o usuário não existe adiciono na lista */
 		if(find == false) {
-			listOfPlayers.add(player);	
+			listOfPlayers.add(player);
 		}
 		/* Escrevo no arquivo de db.xml */
 		refreshDb();

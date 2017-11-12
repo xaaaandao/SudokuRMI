@@ -1,4 +1,5 @@
 import java.rmi.registry.*;
+import java.util.Scanner;
 
 public class Servidor {
 	
@@ -20,8 +21,18 @@ public class Servidor {
 	         registry.bind("JogoSudoku", manageSudoku);
 
 	         /* Aguardando invocações remotas */
+	         Command command = new Command();
+        	 command.clearScreen();
 	         System.out.println("Servidor pronto ...");
 	         
+        	 Scanner scanner = new Scanner(System.in);
+        	 String commandToExecute = "";
+    		 while(!commandToExecute.equalsIgnoreCase("sair")){
+        		 System.out.print(">");
+        		 commandToExecute = scanner.nextLine();
+        		 System.out.println(command.processCommand(manageSudoku, commandToExecute));
+	         }
+	         System.exit(1);
 	     } catch (Exception e) {
 	         System.out.println(e);
          }
