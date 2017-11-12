@@ -122,7 +122,7 @@ public class SudokuGUI{
 		menuBar.add(optionsMenuItem);
 		menuBar.add(helpMenuItem);
 		rankMenuItemListener(sudoku, rankMenuItem);
-		exitMenuItemListener(exitMenuItem);
+		exitMenuItemListener(sudoku, currentHits, exitMenuItem);
 		howToPlayMenuItemListener(howToPlayMenuItem);
 		contactMenuItemListener(contactMenuItem);
 		loadListOfFields(listOfFields, matrixFields);
@@ -186,13 +186,15 @@ public class SudokuGUI{
 						int numberOfErrors = s.numberOfErrors(level);
 						String stringHit = Integer.toString(numberOfHits);
 						String stringError = Integer.toString(numberOfErrors);
+						/* Atualizo a pontuação do cliente */
+						currentHits = currentHits + numberOfHits;
+						currentErrors = currentErrors + numberOfErrors;
 						if (JOptionPane.showConfirmDialog(null, "Acertos: " + stringHit +"\nErros: " +  stringError + "\nVocê deseja ir para o próximo nível?", "Acertos e erros", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-							/* Atualizo a pontuação do cliente */
-							currentHits = currentHits + numberOfHits;
-							currentErrors = currentErrors + numberOfErrors;
 							if(level + 1 == 9) {
 								if (JOptionPane.showConfirmDialog(null, "Parabéns! Você zerou o Sudoku!\nVocê acertou no total: " + Integer.toString(currentHits) + "\nVocê errou no total: " + Integer.toString(currentErrors) + "\nVocê deseja salvar seu nome no ranking?", "Parabéns!", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-									addNameRanking(sudoku, currentHits);
+									if(currentHits > 0) {
+										addNameRanking(sudoku, currentHits);	
+									}
 								}
 								System.exit(1);	
 							} else {
@@ -206,6 +208,9 @@ public class SudokuGUI{
 								}
 							}
 						} else {
+							if(currentHits > 0) {
+								addNameRanking(sudoku, currentHits);	
+							}
 							System.exit(1);
 						}
 					} catch (RemoteException re){
@@ -492,12 +497,17 @@ public class SudokuGUI{
 	 * O método exitMenuItemListener(JMenuItem exitMenuItem), verifica
 	 * se o cursor foi clicado no campo que foi passado por parâmetro,
 	 * se sim fecha a janela.
+	 * @param sudoku é um objeto do tipo SudokuInterface, que irá permitir invocar métodos remotos presentes no servidor.
+	 * @param score é um inteiro com a pontuação obtida pelo jogador.
 	 * @param exitMenuItem é um JMenuItem que será verificado se o mesmo for clicado ou não.
 	 * @return void.
 	 * */
-	public void exitMenuItemListener(JMenuItem exitMenuItem){
+	public void exitMenuItemListener(SudokuInterface sudoku, int score, JMenuItem exitMenuItem){
 		exitMenuItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent ev) {
+		    		if(score > 0) {
+			    		addNameRanking(sudoku, score);
+		    		}
 		            System.exit(1);
 		    }
 		});
