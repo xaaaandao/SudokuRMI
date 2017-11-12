@@ -46,7 +46,11 @@ public class SudokuGUI{
 				break;
 			case 3:
 				/* Caso que o jogador esteja sobescrevendo seja diferente ao valor que já esteja lá */
-				if (JOptionPane.showConfirmDialog(null, "Você deseja sobrescrever o valor?", "Posição já preenchida", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+				String message = "Você deseja sobrescrever o valor?";
+				if(value == 0) {
+					message = "Você deseja remover o valor?";
+				}
+				if (JOptionPane.showConfirmDialog(null, message, "Posição já preenchida", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					try {
 						sudoku.replaceValue(level, value, field.getI(), field.getJ());
 					} catch (RemoteException r) {
