@@ -2,6 +2,8 @@ import java.rmi.*;
 import java.rmi.server.*;
 import java.util.*;
 
+import com.sun.glass.ui.Robot;
+
 public class Sudoku{
 
 	int [][]matrixAnswers;
@@ -102,6 +104,8 @@ public class Sudoku{
 		}
 	}
 	
+	
+	
 	/**
 	 * O método fillOtherPositions(int [][]matrix), preenche a matriz com as colunas 1 a 8.
 	 * @param matrix arranjo bidimensional com os valores que será preenchido nas demais colunas.
@@ -188,6 +192,23 @@ public class Sudoku{
     	return error;
     }
 
+	public boolean transposedOrNo() {
+		int randomNumber = new Random().nextInt((2 - 0) + 0) + 0;
+        if(randomNumber == 1)
+        	return true;
+        return false;
+	}
+	
+    public void tranposedMatrix(int [][] matrix){
+        int[][] newMatrix  = new int[9][9];
+        for(int i = 0; i < rows; i++){
+            for(int j = 0; j < columns; j++){
+            	newMatrix[j][i] = matrix[i][j];
+            }
+        }
+        copyMatrix(matrix, newMatrix);
+    }
+	
 	/**
 	 * O método generateSudoku(int currentValue, int numberOfHide), gera três matrizes uma com os campos,
 	 * outra com os valores que foram preenchidos pelos usuário e outro com a matriz de resposta.
@@ -202,6 +223,9 @@ public class Sudoku{
 		sudoku.matrixPlayer = new int[rows][columns];
 		fillFirstColumnMatrix(currentValue, sudoku.matrixAnswers);
 		fillOtherPositions(sudoku.matrixAnswers);
+		if(transposedOrNo() == true){
+			tranposedMatrix(sudoku.matrixAnswers);
+		}
 		hidePositionsMatrix(sudoku.matrixFields, sudoku.matrixAnswers, numberOfHide);
 		copyMatrix(sudoku.matrixPlayer, sudoku.matrixFields);
 		return sudoku;
