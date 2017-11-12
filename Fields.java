@@ -11,6 +11,9 @@ public class Fields{
 	/**
 	 * O construtor Fields(int i, int j, JTextField field), que atribui 
 	 * os valores nos atributos daquele objeto.
+	 * @param i é um inteiro com a posição do campo no eixo x.
+	 * @param j é um inteiro com a posição do campo no eixo y.
+	 * @param field JTextField com a o campo onde será preenchido pelo usuário.
 	 * */
 	public Fields(int i, int j, JTextField field){
 		this.i = i;
@@ -20,6 +23,7 @@ public class Fields{
 	
 	/**
 	 * O método setI(int i), atribui o valor de i no atributo i do objeto. 
+	 * @param i é um inteiro com a posição do campo no eixo x.
 	 * @return void.
 	 * */
 	public void setI(int i){
@@ -27,7 +31,8 @@ public class Fields{
 	}
 
 	/**
-	 * O método setJ(int j), atribui o valor de j no atributo j do objeto. 
+	 * O método setJ(int j), atribui o valor de j no atributo j do objeto.
+	 * @param j é um inteiro com a posição do campo no eixo y.
 	 * @return void.
 	 * */
 	public void setJ(int j){
@@ -35,7 +40,8 @@ public class Fields{
 	}
 	
 	/**
-	 * O método setJTextField(JTextField field), atribui o valor de field no atributo field do objeto. 
+	 * O método setJTextField(JTextField field), atribui o valor de field no atributo field do objeto.
+	 * @param field JTextField com a o campo onde será preenchido pelo usuário.
 	 * @return void.
 	 * */
 	public void setJTextField(JTextField field){

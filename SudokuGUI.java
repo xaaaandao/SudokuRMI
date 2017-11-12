@@ -24,6 +24,7 @@ public class SudokuGUI{
 	/**
 	 * O construtor SudokuGUI(SudokuInterface sudoku), atribui o parâmetro sudoku
 	 * a um atributo da classe.
+	 * @param sudoku é um objeto do tipo SudokuInterface, que irá permitir invocar métodos remotos presentes no servidor.
 	 * */
 	public SudokuGUI(SudokuInterface sudoku) {
 		s = sudoku;
@@ -34,6 +35,11 @@ public class SudokuGUI{
 	 * a resposta que foi dada ao servidor, se for um significa que todos os campos já foram preenchidos, se for
 	 * dois que o valor foi adicionado correamente, e por fim três que verifica se o usuário deseja ou não
 	 * sobrescrever ou não o valor.
+	 * @param sudoku é um objeto do tipo SudokuInterface, que irá permitir invocar métodos remotos presentes no servidor.
+	 * @param level é um identificador do sudoku que está sendo jogado pelo jogador.
+	 * @param response é um inteiro com a resposta que foi dada pelo servidor.
+	 * @param value é um inteiro caso seja alterado ou removido o valor.
+	 * @param field é um objeto do tipo Fields, que permitir saber a posição do campo que foi preenchido pelo jogador.
 	 * @return void.
 	 * */
 	public void checkResponseSudoku(SudokuInterface sudoku, int level, int response, int value, Fields field) {
@@ -72,48 +78,23 @@ public class SudokuGUI{
 	}
 	
 	/**
-	 * O método printMatrix(int [][]matrix), imprime a variável matrix.
-	 * @return void.
+	 * O método levelForSudoku(int level), retorna a string irá aparecer no topo da janela com nível atual do jogador.
+	 * @param level é um identificador do sudoku que está sendo jogado pelo jogador.
+	 * @return String com o texto que irá aparecer no topo da janela.
 	 * */
-	public void printMatrix(int [][]matrix) {
-		for(int i = 0; i < rows; i++) {
-			for(int j = 0; j < columns; j++) {
-				System.out.print(matrix[i][j] + " ");
-			}
-			System.out.print("\n");
-		}
-	}
-	
-	/**
-	 * O método copyMatrix(int[][] dest, int[][] src), recebe duas matrizes uma de origem e outra de destino,
-	 * e é copiado os valores presentes na matriz de origem para um matriz de destino.
-	 * @return void.
-	 * */
-	public void copyMatrix(int[][] dest,  int[][] src) {
-		for(int i = 0; i < rows; i++) {
-			for(int j = 0; j < columns; j++)
-				dest[i][j] = src[i][j];
-		}
-	}
-	
 	public String levelForSudoku(int level){
-		/*if(level >= 0 && level <= 2)
-			return "Jogue Sudoku (Nível Fácil)";
-		else if(level >= 3 && level <= 5)
-			return "Jogue Sudoku (Nível Médio)";
-		return "Jogue Sudoku (Nível Díficil)";*/
 		return "Jogue Sudoku (Nível " +  Integer.toString(level + 1)+")";
 	}
 	
 	/**
-	 * O método buildWindowSudoku(SudokuInterface sudoku, int [][]matrixFields, int[][] matrixUser), primeiramente
-	 * verifica se a interface gráfica já foi criada ou não, se já tiver sido criada percorre na matrixFields
-	 * verifica se na posição que está sendo percorrida é zero se for zero vai ser um JTextField, caso contrário
-	 * JLabel. Caso a interface gráfica já esteja montada, verifica se matriz que está sendo exibida e a matriz
-	 * que está sendo preenchida pelos usuários no servidor é diferente, se for diferente atualiza com os novos valores.
-	 * Verifica se todos os campos estão preenchidos, se sim pergunta se o jogador se quer verificar 
-	 * os acertos e erros, se não continua jogando e após daqui 10 segundos verifica se todas as posições 
-	 * estão preenchidas novamente. 
+	 * O método buildWindowSudoku(SudokuInterface sudoku, int level, int [][]matrixFields, int[][] matrixUser), cria a interface 
+	 * gráfica. Após isso, executa o loop infinito verificando se outros jogadores preencheram outras posições se sim
+	 * atualiza os campos e verificando se todas as posições já foram preenchidas. Se sim o jogador pode solicitar um
+	 * novo nível se não o mesmo pode parar.
+	 * @param sudoku é um objeto do tipo SudokuInterface, que irá permitir invocar métodos remotos presentes no servidor.
+	 * @param level é um identificador do sudoku que está sendo jogado pelo jogador.
+	 * @param matrixFields é um arranjo bidimensional de inteiros com todos os campos que devem ser preenchidos pelo jogador.
+	 * @param matrixUser é um arranjo bidimensional de inteiros com todos os valores que já foram ou vão ser preenchidos pelo jogador.
 	 * @return void.
 	 * */
 	public void buildWindowSudoku(SudokuInterface sudoku, int level, int [][]matrixFields, int[][] matrixUser) throws IOException{
@@ -180,7 +161,6 @@ public class SudokuGUI{
 		window.setVisible(true);
 		
 		while(true) {
-			//matrixUpdate = sudokuUpdate.getMatrix();
 			try {
 				matrixUpdate = sudoku.matrixForPlayer(level); 
 			} catch (RemoteException r) {
@@ -216,7 +196,7 @@ public class SudokuGUI{
 								}
 								System.exit(1);	
 							} else {
-								//Pede o novo sudoku
+								/* Pede o novo sudoku */
 								window.dispose();
 								level++;
 								try {
@@ -244,6 +224,11 @@ public class SudokuGUI{
 		}
 	}
 	
+	/**
+	 * O método threadSleep(long time), é uma thread que para o sistema pelo tempo que foi passado por parâmetro.
+	 * @param time que é um long com o tempo desejado para pausar.
+	 * @return void.
+	 * */
 	public void threadSleep(long time) {
 		try {
 			Thread.sleep(time);	
@@ -252,6 +237,13 @@ public class SudokuGUI{
 		}
 	}
 	
+	/**
+	 * O método addNameRanking(SudokuInterface sudoku, int score), é uma interface gráfica
+	 * que solicita o nome do jogador, para que ele possa ser adicionado no ranking.
+	 * @param sudoku é um objeto do tipo SudokuInterface, que irá permitir invocar métodos remotos presentes no servidor.
+	 * @param score é um inteiro com a pontuação obtida pelo jogador.
+	 * @return void.
+	 * */
 	public void addNameRanking(SudokuInterface sudoku, int score){
 		String[] options = {"Ok"};
 		JLabel labelName = new JLabel("Nome: ");
@@ -279,6 +271,12 @@ public class SudokuGUI{
 	 * O método sudokuFinish(List<Fields> listOfFields, int [][]matrixUser, JTextField [][]content),
 	 * verifica se a matriz do usuário e o campo tem valores ou tem um caractere, se sim retorna
 	 * true, caso contrário retorna false.
+	 * @param listOfFields é uma lista de campos que devem ser preenchidos pelo usuários, utilizado 
+	 * para que não se veirique todas as posições do sudoku, somente algumas.
+	 * @param matrixUser é um arranjo bidimensional de inteiros com os valores que foram preenchidos pelo 
+	 * jogador.
+	 * @param content  é um arranjo bidimensional de JTextField com os valores que foram preenchidos pelo 
+	 * jogador.
 	 * @return true ou false, true caso todas as posições de ambas as matrizes estejem preenchidas, 
 	 * false caso não estejem todas preenchidas.
 	 * */
@@ -296,6 +294,10 @@ public class SudokuGUI{
 	/**
 	 * O método loadListOfFields(List<Fields> listOfFields, int [][]matrixFields), carrega as posições que 
 	 * dos campos que devem ser preenchidos, em uma lista.
+	 * @param listOfFields é uma lista de campos que devem ser preenchidos pelo usuários, utilizado 
+	 * para que não se veirique todas as posições do sudoku, somente algumas.
+	 * @param matrixFields é um arranjo bidimensional de inteiros com todas as posições que devem ser preenchidas pelo 
+	 * jogador.
 	 * @return void.
 	 * */
 	public void loadListOfFields(List<Fields> listOfFields, int [][]matrixFields) {
@@ -314,6 +316,8 @@ public class SudokuGUI{
 	 * O método checkValue(PlainDocument document), verifica simplesmente se o valor que foi colocado no JTextField
 	 * é um somente um caractere, e se é um valor de 1 a 9, que são os únicos valores que são permitidos por um
 	 * sudoku.
+	 * @param document é do PlainDocument que será verificado se o valor que foi inserido é maior igual a 1 ou menor
+	 * igual a 9, e se é um dígito.
 	 * @return void.
 	 * */
 	public void checkValue(PlainDocument document) {
@@ -371,6 +375,10 @@ public class SudokuGUI{
 	 * O método focusField(SudokuInterface sudoku, JTextField field, Fields position), verifica
 	 * se o cursor ainda está naquele campo, quando não está no campo ele pega o valor e a posição e manda 
 	 * para o servidor processar e pega a resposta do servidor e interpreta ela.
+	 * @param sudoku é um objeto do tipo SudokuInterface, que irá permitir invocar métodos remotos presentes no servidor.
+	 * @param level é um inteiro que funciona com identificador do sudoku que está sendo jogado pelo jogador.
+	 * @param field é um JTextField que é o campo que foi preenchido pelo jogador.
+	 * @param position é um objeto do tipo Fields, que permitir saber a posição do campo que foi preenchido pelo jogador.
 	 * @return void.
 	 * */
 	public void focusField(SudokuInterface sudoku, int level, JTextField field, Fields position) {
@@ -398,6 +406,8 @@ public class SudokuGUI{
 	/**
 	 * O método compareMatrix(int [][]matrixOne, int[][] matrixTwo), compara duas matrizes se ambas forem
 	 * iguais retorna true caso contrário falso.
+	 * @param matrixOne arranjo bidimensional de inteiros que será comparado com o parâmetro matrixTwo.
+	 * @param matrixTwo arranjo bidimensional de inteiros que será comparado com o parâmetro matrixOne.
 	 * @return true ou false, que é um booleano, true caso sejem idênticas e false caso não seja.
 	 * */
 	public boolean compareMatrix(int [][]matrixOne, int[][] matrixTwo) {
@@ -411,6 +421,13 @@ public class SudokuGUI{
 		return true;
 	}
 
+	/**
+	 * O método howToPlayMenuItemListener(JMenuItem howToPlayMenuItemListener), verifica
+	 * se o cursor foi clicado no campo que foi passado por parâmetro,
+	 * se sim aparece uma janela com dúvidas que podem surgir do sudoku.
+	 * @param howToPlayMenuItem é um JMenuItem que será verificado se o mesmo for clicado ou não.
+	 * @return void.
+	 * */
 	public void howToPlayMenuItemListener(JMenuItem howToPlayMenuItem){
 		howToPlayMenuItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent ev) {
@@ -452,6 +469,7 @@ public class SudokuGUI{
 	 * O método contactMenuItemListener(JMenuItem contactMenuItem), verifica
 	 * se o cursor foi clicado no campo que foi passado por parâmetro,
 	 * se sim aparece uma janela com os contatos da pessoa que desenvolveu.
+	 * @param contactMenuItem é um JMenuItem que será verificado se o mesmo for clicado ou não.
 	 * @return void.
 	 * */
 	public void contactMenuItemListener(JMenuItem contactMenuItem){
@@ -474,6 +492,7 @@ public class SudokuGUI{
 	 * O método exitMenuItemListener(JMenuItem exitMenuItem), verifica
 	 * se o cursor foi clicado no campo que foi passado por parâmetro,
 	 * se sim fecha a janela.
+	 * @param exitMenuItem é um JMenuItem que será verificado se o mesmo for clicado ou não.
 	 * @return void.
 	 * */
 	public void exitMenuItemListener(JMenuItem exitMenuItem){
@@ -485,6 +504,13 @@ public class SudokuGUI{
 
 	}
 	
+	/**
+	 * O método showRanking(List<Players> listOfPlayers), a partir da lista de jogadores 
+	 * recebida como parâmetro exibe a mesma caso tenha jogadores em uma interface gráfica,
+	 * caso não tenha somente mostra uma mensagem de ranking vazio.
+	 * @param listOfPlayers que é uma lista de jogadores, com todos os jogadores presentes no ranking.
+	 * @return void.
+	 * */
 	public void showRanking(List<Players> listOfPlayers) {
 		int numberOfColumns = 2;
 		otherWindow = true;
@@ -511,6 +537,14 @@ public class SudokuGUI{
 		}
 	}
 
+	/**
+	 * O método rankMenuItemListener(SudokuInterface sudoku, JMenuItem rankMenuItem), verifica
+	 * se o cursor foi clicado no campo que foi passado por parâmetro, se sim invoca o método
+	 * remoto no servidor que retorna a lista de jogadores presentes no ranking.
+	 * @param sudoku é um objeto do tipo SudokuInterface, que irá permitir invocar métodos remotos presentes no servidor.
+	 * @param rankMenuItem é um JMenuItem que será verificado se o mesmo for clicado ou não.
+	 * @return void.
+	 * */
 	public void rankMenuItemListener(SudokuInterface sudoku, JMenuItem rankMenuItem){
 		rankMenuItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent ev) {
