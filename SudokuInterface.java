@@ -22,4 +22,5 @@ public interface SudokuInterface extends Remote {
 	public int getOldValue(int id, int i, int j) throws RemoteException;
 	public void addNewRecord(Players player) throws RemoteException;
 	public List<Players> getListOfPlayers() throws RemoteException;
+	public void removePlayer(String name) throws RemoteException;
 }

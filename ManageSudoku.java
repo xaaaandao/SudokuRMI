@@ -319,4 +319,19 @@ public class ManageSudoku extends UnicastRemoteObject implements SudokuInterface
 		sortReversedListOfPlayers(copyListOfPlayers);
 		return copyListOfPlayers;
 	}
+	
+	/**
+	 * O método removePlayer(String name), elimina o elemento da lista de jogadores que possui o mesmo
+	 * nome do valor que foi passado por parâmetro.
+	 * @param name é uma String com o nome que vai ser removido da lista de jogadores.
+	 * @return void.
+	 * */
+	public void removePlayer(String name) throws RemoteException{
+		for(int i = 0; i < listOfPlayers.size(); i++) {
+			if(listOfPlayers.get(i).getName().equals(name)) {
+				listOfPlayers.remove(i);
+				return;
+			}
+		}
+	}
 }

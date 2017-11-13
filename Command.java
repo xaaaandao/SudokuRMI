@@ -320,6 +320,32 @@ public class Command {
 	}
 	
 	/**
+	 * O método processCommandRemoveRanking(ManageSudoku manageSudoku, String command), remove um elemento
+	 * da lista de jogadores que foi passado por parâmetro.
+	 * @param manageSudoku é um objeto do tipo ManageSudoku que permite invoca o sudoku.
+	 * @param command que é o nome do jogador que irá ser removido da lista de jogadores.
+	 * @return String se foi removido ou não o jogador.
+	 * */
+	public String processCommandRemoveRanking(ManageSudoku manageSudoku, String command){
+		List<Players> list = null;
+		try {
+			list = manageSudoku.getListOfPlayers();
+			for(int i = 0; i < list.size(); i++) {
+				if(list.get(i).getName().equals(command)) {
+					list.remove(i);
+					manageSudoku.removePlayer(command);
+					manageSudoku.refreshDb();
+					return "jogador removido com sucesso\n";
+				}
+			}
+			return "nenhum jogador com esse nome foi localizado\n";
+		} catch (RemoteException r) {
+			
+		}
+		return null;
+	}
+	
+	/**
 	 * O método printRanking(List<Players> listOfPlayers), imprime a lista de jogadores em uma String.
 	 * @param listOfPlayers é uma lista do tipo Players que possui informação de todos os jogadores.
 	 * @return ranking String com todos os jogadores do ranking.
@@ -350,6 +376,7 @@ public class Command {
 				case "ajuda":
 					return "ajuda: aparece essa informação\n" +
 						   "ranking: mostra o ranking de jogadores e sua pontuação\n" +
+						   "removerranking {nomeplayer}: remover do ranking o jogador que foi passado por parâmetro\n" +
 						   "resposta {-t}: mostra as resposta de todos os sudokus\n" +
 						   "resposta {1...9}: mostra as resposta do sudoku que foi passado como parâmetro\n" +
 						   "reset {-s}: apaga todos os valores presentes no sudoku de jogadores\n"+
@@ -380,6 +407,8 @@ public class Command {
 					return processCommandReset(manageSudoku, request[1]);
 				case "visualizar":
 					return processCommandPlayer(manageSudoku, request[1]);
+				case "removerranking":
+					return processCommandRemoveRanking(manageSudoku, request[1]);					
 				default:
 					return "comando não existente pesquise digitando ajuda";
 			}

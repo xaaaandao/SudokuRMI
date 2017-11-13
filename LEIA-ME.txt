@@ -1,0 +1,15 @@
+=====================================================
+	Sudoku RMI (Remote Method Invocation)
+=====================================================
+  Alexandre Yuji Kajihara e Rafael Alessandor Ramos
+=====================================================
+1. Para jogar abra três terminais.
+1.1 No primeiro use o comando make registry.
+1.2 No segundo use o comando make server.
+1.3 No terceiro use o comando make client.
+2. Divirta-se jogue as noves fases presentes no jogo.
+=====================================================
+Observações
+1. Não incluímos um caso de teste, pois como cada sudoku é gerado aleatoriamente fica díficl de escrever um caso de teste.
+2. Não existe o comando no servidor de novo jogo, devido que pensamos que poder ter um jogador e se o servidor der o novo jogo aqueles campos que foram preenchidos pelo jogador perderiam sua validade.
+3. Se o jogo já começou e alguém entrar no jogo sim já terá as posições preenchidas. Isso porque se o novo jogador começasse na mesma fase que os demais jogadores iria ser uma desvantagem, pois o mesmo iria conseguir uma pontuação inferior. Além do que como o jogador tem a opção de sobrescrever ou remover um valor, o mesmo pode aceitar aqueles valores ou substituir por valores que o mesmo acredita estar correto.
