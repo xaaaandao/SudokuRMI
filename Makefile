@@ -15,10 +15,3 @@ server:
 client:
 	javac Fields.java SudokuGUI.java Cliente.java
 	java -Djava.security.policy=policy.txt Cliente
-
-git:
-	git checkout master
-	git pull origin master
-	git merge xandao
-	git push origin master
-	git checkout xandao
